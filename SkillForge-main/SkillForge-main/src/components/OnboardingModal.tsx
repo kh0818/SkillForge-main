@@ -1,233 +1,215 @@
 import { useState } from 'react';
-import type { Skill, SkillStatus } from '../data/mockData';
+import { X, User, Rocket, Compass, CheckCircle2 } from 'lucide-react';
+import type { Skill } from '../data/mockData';
 
 interface OnboardingModalProps {
-  onComplete: (updatedSkills: Skill[]) => void;
   skills: Skill[];
+  onClose: () => void;
+  onComplete: (selectedSkillIds: string[]) => void;
 }
 
-const QUESTIONS = [
-  {
-    id: 'education',
-    question: 'What is your current education level?',
-    options: ['Diploma', "Bachelor's Degree", "Master's or above", 'Other'],
-  },
-  {
-    id: 'field',
-    question: 'Which field are you most interested in?',
-    options: [
-      'Tech', 'Business', 'Creative', 'Operations',
-      'Finance and Accounting', 'Data and Analytics',
-      'People and Culture', 'Legal and Compliance',
-      'Healthcare and Life Sciences', 'Education and Training', 'Other',
-    ],
-  },
-  {
-    id: 'tools',
-    question: 'What tools or software do you already use?',
-    options: [
-      'Microsoft Office (Word, Excel, PowerPoint)',
-      'Design tools (Figma, Canva, Adobe)',
-      'Coding (Python, JavaScript, SQL)',
-      'Data tools (Tableau, Power BI, Excel)',
-      'Project management (Jira, Trello, Asana)',
-      'Other',
-    ],
-    multi: true,
-  },
-  {
-    id: 'goal',
-    question: 'What is your career goal?',
-    options: [
-      'Get my first job',
-      'Switch to a new field',
-      'Get promoted in my current role',
-      'Start my own business',
-      'Other',
-    ],
-  },
-];
+type Step = 'welcome' | 'profile' | 'interests' | 'complete';
 
-function mapAnswersToSkills(
-  answers: Record<string, string | string[]>,
-  skills: Skill[],
-): Skill[] {
-  const toSelfDeclare = new Set<string>();
+export default function OnboardingModal({ skills = [], onClose, onComplete }: OnboardingModalProps) {
+  const [step, setStep] = useState<Step>('welcome');
+  const [name, setName] = useState('');
+  const [role, setRole] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-  const field = answers.field as string;
-  const tools = answers.tools as string[];
-  const education = answers.education as string;
+  const safeSkills = Array.isArray(skills) ? skills : [];
+  const categories = Array.from(new Set(safeSkills.map((s) => s?.category))).filter(Boolean);
 
-  // Map field interest to skills in that category
-  skills.filter(s => s.category === field).forEach(s => {
-    if (s.level === 1) toSelfDeclare.add(s.id);
-  });
+  const handleCategoryToggle = (category: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category],
+    );
+  };
 
-  // Map tools to specific skills
-  if (tools?.includes('Microsoft Office (Word, Excel, PowerPoint)')) {
-    toSelfDeclare.add('skill-writing');
-    toSelfDeclare.add('skill-presentation');
-    toSelfDeclare.add('skill-business-case');
-  }
-  if (tools?.includes('Design tools (Figma, Canva, Adobe)')) {
-    toSelfDeclare.add('skill-figma');
-    toSelfDeclare.add('skill-ui-design');
-    toSelfDeclare.add('skill-visual-story');
-  }
-  if (tools?.includes('Coding (Python, JavaScript, SQL)')) {
-    toSelfDeclare.add('skill-react');
-    toSelfDeclare.add('skill-python');
-    toSelfDeclare.add('skill-sql');
-    toSelfDeclare.add('skill-sql-query');
-  }
-  if (tools?.includes('Data tools (Tableau, Power BI, Excel)')) {
-    toSelfDeclare.add('skill-bi');
-    toSelfDeclare.add('skill-analytics');
-    toSelfDeclare.add('skill-data-viz');
-  }
-  if (tools?.includes('Project management (Jira, Trello, Asana)')) {
-    toSelfDeclare.add('skill-agile');
-    toSelfDeclare.add('skill-plm');
-    toSelfDeclare.add('skill-process');
-  }
+  const mapAnswersToSkills = (): string[] => {
+    if (safeSkills.length === 0) return [];
+    
+    const targetCategories = selectedCategories.length > 0 ? selectedCategories : categories;
+    
+    return safeSkills
+      .filter((skill) => skill?.category && targetCategories.includes(skill.category))
+      .map((skill) => skill.id);
+  };
 
-  // Education level boosts
-  if (education === "Master's or above") {
-    skills.filter(s => s.level === 1).forEach(s => toSelfDeclare.add(s.id));
-  } else if (education === "Bachelor's Degree") {
-    skills.filter(s => s.level === 1 && s.category === field).forEach(s => toSelfDeclare.add(s.id));
-  }
-
-  return skills.map(s => {
-    if (toSelfDeclare.has(s.id) && s.status === 'locked') {
-      return { ...s, status: 'self-declared' as SkillStatus, skillLevel: 1 };
+  const handleNext = () => {
+    if (step === 'welcome') {
+      setStep('profile');
+    } else if (step === 'profile') {
+      if (!name.trim()) return;
+      setStep('interests');
+    } else if (step === 'interests') {
+      setStep('complete');
+    } else if (step === 'complete') {
+      const initialSkillIds = mapAnswersToSkills();
+      onComplete(initialSkillIds);
     }
-    return s;
-  });
-}
-
-export default function OnboardingModal({ onComplete, skills }: OnboardingModalProps) {
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
-  const [otherValues, setOtherValues] = useState<Record<string, string>>({});
-
-  const question = QUESTIONS[step];
-  const isMulti = question.multi === true;
-  const currentAnswer = answers[question.id];
-
-  function handleSelect(option: string) {
-    if (isMulti) {
-      const current = (currentAnswer as string[]) ?? [];
-      const updated = current.includes(option)
-        ? current.filter(o => o !== option)
-        : [...current, option];
-      setAnswers(prev => ({ ...prev, [question.id]: updated }));
-    } else {
-      setAnswers(prev => ({ ...prev, [question.id]: option }));
-    }
-  }
-
-  function isSelected(option: string) {
-    if (isMulti) return ((currentAnswer as string[]) ?? []).includes(option);
-    return currentAnswer === option;
-  }
-
-  function handleNext() {
-    if (step < QUESTIONS.length - 1) {
-      setStep(s => s + 1);
-    } else {
-      const updatedSkills = mapAnswersToSkills(answers, skills);
-      onComplete(updatedSkills);
-    }
-  }
-
-  const canProceed = isMulti
-    ? ((currentAnswer as string[]) ?? []).length > 0
-    : !!currentAnswer;
+  };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/95 backdrop-blur-sm">
-      <div className="w-full max-w-lg mx-4 bg-gray-900 border border-gray-700 rounded-2xl p-8 shadow-2xl">
-        {/* Header */}
-        <div className="flex items-center gap-2 mb-6">
-          <div className="w-5 h-5 rounded-md bg-cyan-400/20 border border-cyan-400/40 flex items-center justify-center">
-            <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-lg rounded-2xl border-2 shadow-2xl overflow-hidden flex flex-col"
+        style={{
+          borderColor: '#f59e0b88',
+          boxShadow: '0 0 40px rgba(245, 158, 11, 0.2), inset 0 1px 0 rgba(255,255,255,0.06)',
+          background: 'linear-gradient(165deg, #1a1510 0%, #0d0b09 45%, #12100e 100%)',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div
+          className="flex items-center justify-between px-5 py-3 border-b border-amber-900/50 shrink-0"
+          style={{ background: 'linear-gradient(90deg, #2a1f14 0%, #1a1410 50%, #2a1f14 100%)' }}
+        >
+          <div className="flex items-center gap-2">
+            <Rocket className="text-amber-500" size={20} />
+            <span className="text-amber-200/90 text-xs font-bold uppercase tracking-[0.2em]">
+              Character Creation
+            </span>
           </div>
-          <span className="text-cyan-400 font-bold text-sm tracking-tight">SkillForge</span>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1.5 rounded-lg text-amber-700/80 hover:text-amber-400 hover:bg-amber-950/50 transition-colors"
+            aria-label="Close"
+          >
+            <X size={18} />
+          </button>
         </div>
 
-        {/* Progress bar */}
-        <div className="flex gap-1.5 mb-6">
-          {QUESTIONS.map((_, i) => (
-            <div
-              key={i}
-              className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                i <= step ? 'bg-cyan-400' : 'bg-gray-700'
-              }`}
-            />
-          ))}
-        </div>
-
-        <p className="text-[11px] text-gray-500 uppercase tracking-widest mb-2">
-          Question {step + 1} of {QUESTIONS.length}
-        </p>
-        <h2 className="text-xl font-bold text-white mb-6">{question.question}</h2>
-
-        {/* Options */}
-        <div className="flex flex-col gap-2 mb-8 max-h-64 overflow-y-auto pr-1">
-          {question.options.map(option => (
-            <div key={option}>
-              <button
-                type="button"
-                onClick={() => handleSelect(option)}
-                className={`w-full text-left px-4 py-3 rounded-xl border text-sm font-medium transition-all ${
-                  isSelected(option)
-                    ? 'bg-cyan-400/10 border-cyan-400 text-cyan-300'
-                    : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-gray-500 hover:text-white'
-                }`}
-              >
-                {option}
-              </button>
-              {option === 'Other' && isSelected('Other') && (
-                <input
-                  type="text"
-                  placeholder="Type your answer..."
-                  value={otherValues[question.id] ?? ''}
-                  onChange={e => {
-                    const val = e.target.value.replace(/[^a-zA-Z\s]/g, '');
-                    setOtherValues(prev => ({ ...prev, [question.id]: val }));
-                  }}
-                  className="mt-2 w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-cyan-400/50 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-cyan-400"
-                />
-              )}
+        <form 
+  onSubmit={(e) => e.preventDefault()}
+  className="px-6 py-6 overflow-y-auto flex-1 flex flex-col justify-between min-h-[320px]"
+>
+          {step === 'welcome' && (
+            <div className="flex-1 flex flex-col items-center text-center justify-center py-4">
+              <div className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mb-4">
+                <Compass className="text-amber-400" size={32} />
+              </div>
+              <h2 className="text-2xl font-bold text-amber-50 mb-2">Welcome to SkillForge</h2>
+              <p className="text-sm text-amber-200/70 max-w-sm leading-relaxed">
+                Embark on a visual career journey. Establish your character baseline, clear skill dungeons, and qualify for high-tier guild roles.
+              </p>
             </div>
-          ))}
-        </div>
+          )}
 
-        {/* Footer */}
-        <div className="flex items-center justify-between">
-          <button
-            type="button"
-            onClick={() => step > 0 && setStep(s => s - 1)}
-            className={`text-sm font-medium transition-colors ${
-              step > 0 ? 'text-gray-400 hover:text-white' : 'text-gray-700 cursor-default'
-            }`}
-          >
-            Back
-          </button>
-          <button
-            type="button"
-            onClick={handleNext}
-            disabled={!canProceed}
-            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
-              canProceed
-                ? 'bg-cyan-400 text-gray-900 hover:bg-cyan-300'
-                : 'bg-gray-700 text-gray-500 cursor-not-allowed'
-            }`}
-          >
-            {step < QUESTIONS.length - 1 ? 'Next' : 'Build My Skill Tree'}
-          </button>
-        </div>
+          {step === 'profile' && (
+            <div className="flex-1 flex flex-col justify-center">
+              <h2 className="text-xl font-bold text-amber-50 mb-1">Identity Log</h2>
+              <p className="text-xs text-amber-600/80 mb-5">Identify your operating coordinates.</p>
+              
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="characterName" className="block text-xs font-bold uppercase text-amber-500/80 tracking-wider mb-2">
+                    Character Name *
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-700/60" size={16} />
+                    <input
+                      type="text"
+                      id="characterName"
+                      name="characterName"
+                      required
+                      autoComplete="name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Enter your name..."
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-amber-900/40 bg-amber-950/20 text-amber-50 placeholder-amber-800/50 text-sm focus:outline-none focus:border-amber-600/60 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="targetRole" className="block text-xs font-bold uppercase text-amber-500/80 tracking-wider mb-2">
+                    Target Role / Title
+                  </label>
+                  <input
+                    type="text"
+                    id="targetRole"
+                    name="targetRole"
+                    autoComplete="organization-title"
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    placeholder="e.g. Frontend Dev, Product Manager..."
+                    className="w-full px-4 py-2.5 rounded-xl border-2 border-amber-900/40 bg-amber-950/20 text-amber-50 placeholder-amber-800/50 text-sm focus:outline-none focus:border-amber-600/60 transition-colors"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {step === 'interests' && (
+            <div className="flex-1 flex flex-col justify-center">
+              <h2 className="text-xl font-bold text-amber-50 mb-1">Select Specializations</h2>
+              <p className="text-xs text-amber-600/80 mb-4">Choose trees to unlock initial skill node configurations.</p>
+              
+              <div className="grid grid-cols-2 gap-2.5 my-2">
+                {categories.map((cat) => {
+                  const active = selectedCategories.includes(cat);
+                  return (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => handleCategoryToggle(cat)}
+                      className={`px-4 py-3 rounded-xl border-2 text-sm font-semibold transition-all text-left flex items-center justify-between ${
+                        active
+                          ? 'border-amber-500 text-amber-200 bg-amber-950/40 shadow-[0_0_12px_rgba(245,158,11,0.15)]'
+                          : 'border-amber-900/40 text-amber-700/80 bg-transparent hover:border-amber-800/60'
+                      }`}
+                    >
+                      <span>{cat}</span>
+                      {active && <CheckCircle2 size={14} className="text-amber-400 shrink-0 ml-2" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {step === 'complete' && (
+            <div className="flex-1 flex flex-col items-center text-center justify-center py-4">
+              <div className="w-14 h-14 rounded-full bg-green-500/10 border border-green-500/30 flex items-center justify-center mb-4">
+                <CheckCircle2 className="text-green-400" size={28} />
+              </div>
+              <h2 className="text-xl font-bold text-amber-50 mb-1">Configuration Finalized</h2>
+              <p className="text-sm text-amber-600/80 mb-2 font-medium">Welcome, {name || 'Operator'}</p>
+              <p className="text-xs text-amber-200/60 max-w-xs leading-relaxed">
+                Your primary tree setup is ready. Tap build to compile your nodes and generate the skill map vectors.
+              </p>
+            </div>
+          )}
+
+          <div className="mt-8 pt-4 border-t border-amber-950/40 flex items-center justify-between gap-4 shrink-0">
+            <div className="flex gap-1.5">
+              {(['welcome', 'profile', 'interests', 'complete'] as Step[]).map((s, idx) => (
+                <div
+                  key={s}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    step === s ? 'w-6 bg-amber-500' : 'w-2 bg-amber-950/80'
+                  }`}
+                  style={{
+                    opacity: idx <= ['welcome', 'profile', 'interests', 'complete'].indexOf(step) ? 1 : 0.4
+                  }}
+                />
+              ))}
+            </div>
+
+            <button
+  type="button"
+  onClick={handleNext}
+  disabled={step === 'profile' && !name.trim()}
+  className="px-6 py-2 rounded-xl bg-gradient-to-b from-amber-500 to-amber-700 text-neutral-950 font-bold text-sm shadow-md hover:brightness-110 disabled:opacity-40 disabled:pointer-events-none transition-all"
+>
+              {step === 'complete' ? 'Build my SkillTree' : 'Continue'}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

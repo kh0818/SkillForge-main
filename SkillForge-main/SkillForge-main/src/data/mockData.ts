@@ -7,23 +7,507 @@ export type SkillCategory =
   | 'Creative and Design'
   | 'Sciences and Research'
   | 'Education and Social Sciences';
+
 export interface Skill {
   id: string;
   name: string;
   category: SkillCategory;
   description: string;
   status: SkillStatus;
-  level: number;
+  level: 1 | 2 | 3;
   skillLevel: 0 | 1 | 2 | 3;
   prerequisiteIds?: string[];
 }
 
 export interface Job {
+  department: string;
   id: string;
   title: string;
   description: string;
   requiredSkillIds: string[];
 }
+
+export const SKILLS: Skill[] = [
+  // ── UNIVERSAL TIER 1: FOUNDATIONS (12) ──────────────────────────────
+  { id: 'u-t1-01', name: 'Business Communication', category: 'Universal', description: 'Write professional emails and reports clearly.', status: 'verified', level: 1, skillLevel: 3 },
+  { id: 'u-t1-02', name: 'Digital Literacy', category: 'Universal', description: 'Navigate core digital workplace platforms.', status: 'verified', level: 1, skillLevel: 3 },
+  { id: 'u-t1-03', name: 'Time Management', category: 'Universal', description: 'Prioritize tasks and meet baseline sprint deadlines.', status: 'verified', level: 1, skillLevel: 2 },
+  { id: 'u-t1-04', name: 'Workplace Ethics', category: 'Universal', description: 'Understand professional conduct and accountability standards.', status: 'verified', level: 1, skillLevel: 2 },
+  { id: 'u-t1-05', name: 'Active Listening', category: 'Universal', description: 'Capture requirements accurately during meetings.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'u-t1-06', name: 'Information Gathering', category: 'Universal', description: 'Locate internal documentation efficiently.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'u-t1-07', name: 'Task Switching', category: 'Universal', description: 'Manage multiple low-complexity operational assignments.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'u-t1-08', name: 'Meeting Etiquette', category: 'Universal', description: 'Facilitate and document internal alignment syncs.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'u-t1-09', name: 'Remote Collaboration', category: 'Universal', description: 'Coordinate across distributed team environments.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'u-t1-10', name: 'Goal Setting', category: 'Universal', description: 'Formulate achievable personal weekly milestones.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'u-t1-11', name: 'Feedback Reception', category: 'Universal', description: 'Process constructive criticism and adjust workflows.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'u-t1-12', name: 'Basic Reporting', category: 'Universal', description: 'Summarize project tasks status updates accurately.', status: 'locked', level: 1, skillLevel: 0 },
+
+  // ── UNIVERSAL TIER 2: BRIDGE (18) ───────────────────────────────────
+  { id: 'u-t2-01', name: 'Data Interpretation', category: 'Universal', description: 'Extract insights from charts and basic statistics.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['u-t1-02'] },
+  { id: 'u-t2-02', name: 'Project Management Basics', category: 'Universal', description: 'Track milestones and scope dependencies.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['u-t1-03'] },
+  { id: 'u-t2-03', name: 'Structured Problem Solving', category: 'Universal', description: 'Apply root cause analysis to baseline errors.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['u-t1-01'] },
+  { id: 'u-t2-04', name: 'Team Collaboration Systems', category: 'Universal', description: 'Resolve operational friction inside small groups.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['u-t1-04'] },
+  { id: 'u-t2-05', name: 'Public Speaking', category: 'Universal', description: 'Deliver project updates to internal business owners.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['u-t1-01'] },
+  { id: 'u-t2-06', name: 'Customer Service Basics', category: 'Universal', description: 'De-escalate basic complaints from end users.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['u-t1-04'] },
+  { id: 'u-t2-07', name: 'Conflict Mitigation', category: 'Universal', description: 'Neutralize small team delivery disagreements early.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['u-t1-05'] },
+  { id: 'u-t2-08', name: 'Resource Allocation', category: 'Universal', description: 'Forecast asset requirements for immediate tasks.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['u-t1-03'] },
+  { id: 'u-t2-09', name: 'Technical Writing', category: 'Universal', description: 'Document internal operations step-by-step.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['u-t1-01'] },
+  { id: 'u-t2-10', name: 'Risk Identification', category: 'Universal', description: 'Flag project blockages before they impact timelines.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['u-t1-07'] },
+  { id: 'u-t2-11', name: 'Change Adaptability', category: 'Universal', description: 'Pivot execution when core criteria change.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['u-t1-11'] },
+  { id: 'u-t2-12', name: 'Cross-Functional Syncing', category: 'Universal', description: 'Translate needs between tech and sales squads.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['u-t1-09'] },
+  { id: 'u-t2-13', name: 'Vendor Coordination', category: 'Universal', description: 'Manage asset deliveries with standard external partners.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['u-t1-08'] },
+  { id: 'u-t2-14', name: 'Operational Auditing', category: 'Universal', description: 'Verify daily team execution against compliance rules.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['u-t1-04'] },
+  { id: 'u-t2-15', name: 'Interface Mapping', category: 'Universal', description: 'Build workflow charts of user business interactions.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['u-t1-06'] },
+  { id: 'u-t2-16', name: 'Priority Matrixing', category: 'Universal', description: 'Categorize system issues using urgency models.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['u-t1-03'] },
+  { id: 'u-t2-17', name: 'Interviewing Techs', category: 'Universal', description: 'Extract precise workflow metrics from operational staff.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['u-t1-05'] },
+  { id: 'u-t2-18', name: 'Performance Metrics Tracking', category: 'Universal', description: 'Log team velocity outputs against performance goals.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['u-t1-12'] },
+
+  // ── UNIVERSAL TIER 3: MASTERY (15) ──────────────────────────────────
+  { id: 'u-t3-01', name: 'Financial Literacy', category: 'Universal', description: 'Read line budgets and analyze basic unit metrics.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['u-t2-01', 'u-t2-02'] },
+  { id: 'u-t3-02', name: 'Regional Compliance', category: 'Universal', description: 'Manage data policy constraints across local jurisdictions.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['u-t2-04'] },
+  { id: 'u-t3-03', name: 'Adaptive Leadership', category: 'Universal', description: 'Guide multi-discipline teams through unexpected obstacles.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['u-t2-02', 'u-t2-03'] },
+  { id: 'u-t3-04', name: 'Commercial Negotiation', category: 'Universal', description: 'Secure binding agreements with third-party suppliers.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['u-t2-05', 'u-t2-03'] },
+  { id: 'u-t3-05', name: 'Strategic Execution', category: 'Universal', description: 'Translate macro organizational targets into daily tactics.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['u-t2-02', 'u-t2-06'] },
+  { id: 'u-t3-06', name: 'Crisis Management', category: 'Universal', description: 'Stabilize operations during major system failures.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['u-t2-07', 'u-t2-10'] },
+  { id: 'u-t3-07', name: 'Change Management Leadership', category: 'Universal', description: 'Drive large-scale operational structural shifts safely.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['u-t2-11', 'u-t2-04'] },
+  { id: 'u-t3-08', name: 'Portfolio Governance', category: 'Universal', description: 'Oversee multi-project dependencies simultaneously.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['u-t2-02', 'u-t2-08'] },
+  { id: 'u-t3-09', name: 'Executive Presentation', category: 'Universal', description: 'Pitch large investments to senior company executives.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['u-t2-05', 'u-t2-09'] },
+  { id: 'u-t3-10', name: 'Operational Optimization', category: 'Universal', description: 'Re-engineer workflows to lower organizational costs.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['u-t2-03', 'u-t2-14'] },
+  { id: 'u-t3-11', name: 'Macro Trend Analysis', category: 'Universal', description: 'Evaluate market shifts to anticipate internal staffing changes.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['u-t2-01', 'u-t2-12'] },
+  { id: 'u-t3-12', name: 'Influence Strategies', category: 'Universal', description: 'Build strong operational consensus without direct structural authority.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['u-t2-04', 'u-t2-17'] },
+  { id: 'u-t3-13', name: 'Strategic Relationship Mgmt', category: 'Universal', description: 'Maintain complex regional partnerships over multi-year horizons.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['u-t2-13', 'u-t2-05'] },
+  { id: 'u-t3-14', name: 'Risk Architecture', category: 'Universal', description: 'Build business frameworks to completely avoid legal exposures.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['u-t2-10', 'u-t2-14'] },
+  { id: 'u-t3-15', name: 'Organizational Blueprinting', category: 'Universal', description: 'Design high-leverage team reporting layouts from scratch.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['u-t2-02', 'u-t2-18'] },
+
+  // ── ENGINEERING AND TECH TIER 1: FOUNDATIONS (12) ───────────────────
+  { id: 'et-t1-01', name: 'Programming Basics', category: 'Engineering and Tech', description: 'Write clean script loops and basic structural code blocks.', status: 'verified', level: 1, skillLevel: 3 },
+  { id: 'et-t1-02', name: 'Version Control Systems', category: 'Engineering and Tech', description: 'Manage local and tracking branches via standard Git commands.', status: 'evidenced', level: 1, skillLevel: 2 },
+  { id: 'et-t1-03', name: 'Web Engine Foundations', category: 'Engineering and Tech', description: 'Understand basic browser loops and DOM rendering pathways.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'et-t1-04', name: 'Linux Terminal Basics', category: 'Engineering and Tech', description: 'Navigate directories and manage permissions via shell terminals.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'et-t1-05', name: 'Basic Data Formats', category: 'Engineering and Tech', description: 'Parse and extract metrics from JSON and XML payloads.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'et-t1-06', name: 'SQL Query Writing', category: 'Engineering and Tech', description: 'Execute basic SELECT, JOIN, and filtering database calls.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'et-t1-07', name: 'Algorithm Tracing', category: 'Engineering and Tech', description: 'Calculate loop steps and analyze basic memory variables.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'et-t1-08', name: 'Unit Test Layouts', category: 'Engineering and Tech', description: 'Write elementary test assertions for standalone variables.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'et-t1-09', name: 'Network Protocol Basics', category: 'Engineering and Tech', description: 'Differentiate simple HTTP request types and status codes.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'et-t1-10', name: 'HTML/CSS Layouts', category: 'Engineering and Tech', description: 'Build responsive interface layers using standard flex models.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'et-t1-11', name: 'Script Automation', category: 'Engineering and Tech', description: 'Construct baseline scripts to automate folder cleanups.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'et-t1-12', name: 'Debugging Mechanics', category: 'Engineering and Tech', description: 'Inspect call stacks and decipher execution logs quickly.', status: 'locked', level: 1, skillLevel: 0 },
+
+  // ── ENGINEERING AND TECH TIER 2: BRIDGE (18) ────────────────────────
+  { id: 'et-t2-01', name: 'Systems Design Basics', category: 'Engineering and Tech', description: 'Design modular structural layers for standalone components.', status: 'self-declared', level: 2, skillLevel: 1, prerequisiteIds: ['et-t1-01', 'et-t1-07'] },
+  { id: 'et-t2-02', name: 'Cloud Infrastructure Provisioning', category: 'Engineering and Tech', description: 'Configure simple server instances and security groupings.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['et-t1-04', 'et-t1-09'] },
+  { id: 'et-t2-03', name: 'Database Engine Tuning', category: 'Engineering and Tech', description: 'Build indexing paths and trace heavy query performance.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['et-t1-06', 'et-t1-05'] },
+  { id: 'et-t2-04', name: 'Mobile App Building', category: 'Engineering and Tech', description: 'Render responsive structural views inside mobile platform targets.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['et-t1-01', 'et-t1-10'] },
+  { id: 'et-t2-05', name: 'API Engineering Specs', category: 'Engineering and Tech', description: 'Design clean REST and basic GraphQL interface declarations.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['et-t1-03', 'et-t1-09'] },
+  { id: 'et-t2-06', name: 'Automated Test Suites', category: 'Engineering and Tech', description: 'Orchestrate end-to-end user path testing suites.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['et-t1-08', 'et-t1-12'] },
+  { id: 'et-t2-07', name: 'Containerization Mechanics', category: 'Engineering and Tech', description: 'Package app layers into reproducible build runtime containers.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['et-t1-04', 'et-t1-11'] },
+  { id: 'et-t2-08', name: 'State Management Models', category: 'Engineering and Tech', description: 'Manage clean reactive tracking pipelines across interface nodes.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['et-t1-03', 'et-t1-10'] },
+  { id: 'et-t2-09', name: 'Security Audit Controls', category: 'Engineering and Tech', description: 'Identify fundamental injection paths and credential exposures.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['et-t1-04', 'et-t1-12'] },
+  { id: 'et-t2-10', name: 'Server Runtime Optimization', category: 'Engineering and Tech', description: 'Tune engine garbage collection and standard execution thread usage.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['et-t1-01', 'et-t1-12'] },
+  { id: 'et-t2-11', name: 'CI Pipeline Construction', category: 'Engineering and Tech', description: 'Automate build verification checks upon code deliveries.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['et-t1-02', 'et-t1-11'] },
+  { id: 'et-t2-12', name: 'NoSQL System Layouts', category: 'Engineering and Tech', description: 'Configure non-relational document and key value storage paths.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['et-t1-05', 'et-t1-06'] },
+  { id: 'et-t2-13', name: 'Asynchronous Event Handling', category: 'Engineering and Tech', description: 'Manage detached promise loops and multi-thread notifications safely.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['et-t1-01', 'et-t1-03'] },
+  { id: 'et-t2-14', name: 'Network Configuration Mapping', category: 'Engineering and Tech', description: 'Set up local reverse proxy configurations and routing paths.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['et-t1-09', 'et-t1-04'] },
+  { id: 'et-t2-15', name: 'Memory Profiling', category: 'Engineering and Tech', description: 'Isolate runtime allocations and trace memory leak pathways.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['et-t1-07', 'et-t1-12'] },
+  { id: 'et-t2-16', name: 'CSS Architecture Systems', category: 'Engineering and Tech', description: 'Implement tokenized, scalable asset stylesheets for massive sites.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['et-t1-10'] },
+  { id: 'et-t2-17', name: 'Structured Script Logging', category: 'Engineering and Tech', description: 'Embed structured context schemas inside standard application errors.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['et-t1-11', 'et-t1-12'] },
+  { id: 'et-t2-18', name: 'Data Layer Interceptors', category: 'Engineering and Tech', description: 'Build middle operational software blocks to filter outbound API traffic.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['et-t1-09', 'et-t1-05'] },
+
+  // ── ENGINEERING AND TECH TIER 3: MASTERY (15) ───────────────────────
+  { id: 'et-t3-01', name: 'Distributed Systems Architecture', category: 'Engineering and Tech', description: 'Orchestrate highly fault tolerant computing arrays at high scales.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['et-t2-01', 'et-t2-02'] },
+  { id: 'et-t3-02', name: 'Enterprise AI Stack Integration', category: 'Engineering and Tech', description: 'Deploy context retrieval caches and vector indexing engines.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['et-t2-01', 'et-t2-12'] },
+  { id: 'et-t3-03', name: 'DevOps Lifecycle Infrastructure', category: 'Engineering and Tech', description: 'Manage automated canary deliveries and cluster topologies.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['et-t2-02', 'et-t2-07'] },
+  { id: 'et-t3-04', name: 'Advanced Cyber Security Defenses', category: 'Engineering and Tech', description: 'Mitigate systemic injection exploits and secure authorization systems.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['et-t2-09', 'et-t2-14'] },
+  { id: 'et-t3-05', name: 'Distributed Ingestion Fabrics', category: 'Engineering and Tech', description: 'Design stream processing networks utilizing message brokers.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['et-t2-03', 'et-t13'] },
+  { id: 'et-t3-06', name: 'Site Reliability Engineering', category: 'Engineering and Tech', description: 'Formulate metric tracking alert topologies and auto healing triggers.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['et-t2-10', 'et-t2-11'] },
+  { id: 'et-t3-07', name: 'High Availability DB Kernels', category: 'Engineering and Tech', description: 'Architect multi region write strategies and replication configurations.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['et-t2-03', 'et-t2-12'] },
+  { id: 'et-t3-08', name: 'Mobile Engine Orchestration', category: 'Engineering and Tech', description: 'Manage offline synchronizations and custom target layout models.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['et-t2-04', 'et-t2-08'] },
+  { id: 'et-t3-09', name: 'API Management Gateways', category: 'Engineering and Tech', description: 'Govern structural transformations and edge rate limitations dynamically.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['et-t2-05', 'et-t2-18'] },
+  { id: 'et-t3-10', name: 'Regression Analysis Automation', category: 'Engineering and Tech', description: 'Build target simulation engines validating full system code performance.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['et-t2-06', 'et-t2-15'] },
+  { id: 'et-t3-11', name: 'Container Cluster Federation', category: 'Engineering and Tech', description: 'Govern global virtual operational topologies scaling over multi cloud blocks.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['et-t2-07', 'et-t2-02'] },
+  { id: 'et-t3-12', name: 'Reactive Framework Authoring', category: 'Engineering and Tech', description: 'Design highly custom state evaluation render targets from scratch.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['et-t2-08', 'et-t2-16'] },
+  { id: 'et-t3-13', name: 'Cryptographic Pipeline Engineering', category: 'Engineering and Tech', description: 'Implement rotatable asymmetric token validation architectures at boundary nodes.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['et-t2-09', 'et-t2-13'] },
+  { id: 'et-t3-14', name: 'Low Latency Network Sharding', category: 'Engineering and Tech', description: 'Optimize system packet runtimes by tuning kernel protocol limits directly.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['et-t2-14', 'et-t2-10'] },
+  { id: 'et-t3-15', name: 'Telemetry Infrastructure Design', category: 'Engineering and Tech', description: 'Build heavy time series ingestion targets tracking multi layer trace steps.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['et-t2-15', 'et-t2-17'] },
+
+  // ── BUSINESS AND FINANCE TIER 1: FOUNDATIONS (12) ───────────────────
+  { id: 'bf-t1-01', name: 'Accounting Principles', category: 'Business and Finance', description: 'Understand basic double-entry booking parameters.', status: 'verified', level: 1, skillLevel: 3 },
+  { id: 'bf-t1-02', name: 'Corporate Comms', category: 'Business and Finance', description: 'Draft clear informational items for internal teams.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'bf-t1-03', name: 'Excel Basics', category: 'Business and Finance', description: 'Utilize core tracking layout calculations.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'bf-t1-04', name: 'Market Data Scraping', category: 'Business and Finance', description: 'Collect competitor commercial pricing arrays.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'bf-t1-05', name: 'Basic Arithmetic Tracking', category: 'Business and Finance', description: 'Calculate daily margins across simple product entries.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'bf-t1-06', name: 'Invoicing Workflows', category: 'Business and Finance', description: 'Generate structured payment demands following template paths.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'bf-t1-07', name: 'Regulatory Recordkeeping', category: 'Business and Finance', description: 'Archive fiscal transaction artifacts securely.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'bf-t1-08', name: 'Sales Pipeline Entry', category: 'Business and Finance', description: 'Track prospect communication updates inside system tools.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'bf-t1-09', name: 'Cost Center Logging', category: 'Business and Finance', description: 'Assign team expense lines to correct operational budgets.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'bf-t1-10', name: 'Inventory Registry', category: 'Business and Finance', description: 'Log inbound supplier asset item balances weekly.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'bf-t1-11', name: 'Presentation Slide Setup', category: 'Business and Finance', description: 'Build clean operational performance graphs into templates.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'bf-t1-12', name: 'Customer Communication', category: 'Business and Finance', description: 'Answer basic incoming client pricing requests.', status: 'locked', level: 1, skillLevel: 0 },
+
+  // ── BUSINESS AND FINANCE TIER 2: BRIDGE (18) ────────────────────────
+  { id: 'bf-t2-01', name: 'Financial Analysis Models', category: 'Business and Finance', description: 'Deconstruct corporate balance changes and burn parameters.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-t1-01', 'bf-t1-03'] },
+  { id: 'bf-t2-02', name: 'Corporate Law Systematics', category: 'Business and Finance', description: 'Map out standard corporate business registration structures.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-t1-01', 'bf-t1-02'] },
+  { id: 'bf-t2-03', name: 'Corporate Taxation Fillings', category: 'Business and Finance', description: 'Calculate required value added operational tax allocations.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-t1-01', 'bf-t1-07'] },
+  { id: 'bf-t2-04', name: 'Supply Chain Coordination', category: 'Business and Finance', description: 'Manage moving transport parameters and inventory points.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-t1-04', 'bf-t1-10'] },
+  { id: 'bf-t2-05', name: 'Business Intelligence Tuning', category: 'Business and Finance', description: 'Convert database records into interactive trend dashboards.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-t1-03', 'bf-t1-05'] },
+  { id: 'bf-t2-06', name: 'Product Lifecycle Mechanics', category: 'Business and Finance', description: 'Translate sales tracking data into functional roadmap steps.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-t1-04', 'bf-t1-08'] },
+  { id: 'bf-t2-07', name: 'B2B Sales Execution', category: 'Business and Finance', description: 'Negotiate baseline transaction limits with mid tier client teams.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-t1-08', 'bf-t1-12'] },
+  { id: 'bf-t2-08', name: 'Budget Forecasting Arrays', category: 'Business and Finance', description: 'Construct future operational cost models using historical margins.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-t1-03', 'bf-t1-09'] },
+  { id: 'bf-t2-09', name: 'Audit Preparation Frameworks', category: 'Business and Finance', description: 'Compile ledger evidence sheets verifying fiscal calculations.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-t1-01', 'bf-t1-07'] },
+  { id: 'bf-t2-10', name: 'Procurement Contracting', category: 'Business and Finance', description: 'Draft service legal terms matching supplier cost targets.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-t1-02', 'bf-t1-06'] },
+  { id: 'bf-t2-11', name: 'Market Positioning Analytics', category: 'Business and Finance', description: 'Evaluate competitor advertising spend and customer pricing shifts.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-t1-04', 'bf-t1-11'] },
+  { id: 'bf-t2-12', name: 'Working Capital Management', category: 'Business and Finance', description: 'Optimize day to day cash balances to ensure vendor liquidities.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-t1-05', 'bf-t1-06'] },
+  { id: 'bf-t2-13', name: 'Risk Exposure Mapping', category: 'Business and Finance', description: 'Identify currency fluctuations impacting transactional margins.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-t1-03', 'bf-t1-09'] },
+  { id: 'bf-t2-14', name: 'Operational Capacity Tracking', category: 'Business and Finance', description: 'Measure product delivery velocity against resource overheads.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-t1-10', 'bf-t1-05'] },
+  { id: 'bf-t2-15', name: 'Investor Deck Engineering', category: 'Business and Finance', description: 'Structure financial return charts into strategic investment narratives.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-t1-02', 'bf-t1-11'] },
+  { id: 'bf-t2-16', name: 'CRM Pipeline Automation', category: 'Business and Finance', description: 'Configure status triggers advancing leads inside sales software.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-t1-08', 'bf-t1-03'] },
+  { id: 'bf-t2-17', name: 'Regulatory Statutory Tracking', category: 'Business and Finance', description: 'Verify operational setups match state licensing mandates.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-t1-07', 'bf-t1-02'] },
+  { id: 'bf-t2-18', name: 'Account Growth Mapping', category: 'Business and Finance', description: 'Identify expansion opportunities within established client portfolios.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-t1-12', 'bf-t1-08'] },
+
+  // ── BUSINESS AND FINANCE TIER 3: MASTERY (15) ───────────────────────
+  { id: 'bf-t3-01', name: 'Asset Valuation Models', category: 'Business and Finance', description: 'Calculate exact discounted asset value models for strategic acquisitions.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['bf-t2-01', 'bf-t2-02'] },
+  { id: 'bf-t3-02', name: 'Corporate Expansion Strategies', category: 'Business and Finance', description: 'Design operational cross-border structures and entry mechanisms.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['bf-t2-01', 'bf-t2-04'] },
+  { id: 'bf-t3-03', name: 'Enterprise Risk Structures', category: 'Business and Finance', description: 'Deconstruct capital vulnerabilities and macro economic threats.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['bf-t2-01', 'bf-t2-03'] },
+  { id: 'bf-t3-04', name: 'Unit Economics Optimization', category: 'Business and Finance', description: 'Refine multi tier user acquisitions costs and margins.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['bf-t2-05', 'bf-t2-06'] },
+  { id: 'bf-t3-05', name: 'Portfolio Asset Allocations', category: 'Business and Finance', description: 'Govern capital deployments and cash reserves across operational targets.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['bf-t2-01', 'bf-t2-13'] },
+  { id: 'bf-t3-06', name: 'M&A Deal Term Structuring', category: 'Business and Finance', description: 'Negotiate equity distributions and governance rights for corporate transactions.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['bf-t2-02', 'bf-t2-15'] },
+  { id: 'bf-t3-07', name: 'Global Supply Optimization', category: 'Business and Finance', description: 'Architect intercontinental logistics pipelines to mitigate supply shocks.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['bf-t2-04', 'bf-t2-14'] },
+  { id: 'bf-t3-08', name: 'Enterprise Intelligence Systems', category: 'Business and Finance', description: 'Design automated predictive predictive tracking systems matching fiscal variables.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['bf-t2-05', 'bf-t2-08'] },
+  { id: 'bf-t3-09', name: 'Cross-Border Tax Engineering', category: 'Business and Finance', description: 'Construct internal pricing transfer networks optimizing multi market liabilities.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['bf-t2-03', 'bf-t2-17'] },
+  { id: 'bf-t3-10', name: 'Strategic Pricing Architectures', category: 'Business and Finance', description: 'Formulate dynamic, high scale pricing engines maximizing catalog yield paths.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['bf-t2-06', 'bf-t2-11'] },
+  { id: 'bf-t3-11', name: 'Enterprise Sales Architecture', category: 'Business and Finance', description: 'Structure complex seven figure multi year institutional vendor setups.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['bf-t2-07', 'bf-t2-16'] },
+  { id: 'bf-t3-12', name: 'Treasury Fluidity Engineering', category: 'Business and Finance', description: 'Manage massive multi currency liquidity hedges and debt profiles.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['bf-t2-12', 'bf-t2-13'] },
+  { id: 'bf-t3-13', name: 'Corporate Governance Frameworks', category: 'Business and Finance', description: 'Author binding board policies protecting shareholder compliance metrics.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['bf-t2-02', 'bf-t2-09'] },
+  { id: 'bf-t3-14', name: 'Procurement Master Logistics', category: 'Business and Finance', description: 'Direct strategic structural resource agreements controlling primary supplier dependencies.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['bf-t2-10', 'bf-t2-14'] },
+  { id: 'bf-t3-15', name: 'Capital Market Capitalization', category: 'Business and Finance', description: 'Orchestrate public listings and major bond issues to capture growth capital.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['bf-t2-15', 'bf-t2-12'] },
+
+  // ── MEDICINE AND HEALTH TIER 1 (12) ─────────────────────────────────
+  { id: 'mh-t1-01', name: 'Human Anatomy Basics', category: 'Medicine and Health', description: 'Identify primary physical organ frameworks.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'mh-t1-02', name: 'Clinical Documentation', category: 'Medicine and Health', description: 'Log user vitals systematically.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'mh-t1-03', name: 'First Aid Protocols', category: 'Medicine and Health', description: 'Apply basic emergency response rules.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'mh-t1-04', name: 'Medical Vocabulary', category: 'Medicine and Health', description: 'Decode standard diagnostic text elements.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'mh-t1-05', name: 'Sterilization Basics', category: 'Medicine and Health', description: 'Maintain aseptic standards across environments.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'mh-t1-06', name: 'Patient Intake Mechanics', category: 'Medicine and Health', description: 'Record demographic and past clinical profiles.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'mh-t1-07', name: 'Fluid Chart Maintenance', category: 'Medicine and Health', description: 'Log intake and outputs tracking models.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'mh-t1-08', name: 'Specimen Handling', category: 'Medicine and Health', description: 'Label and secure laboratory samples correctly.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'mh-t1-09', name: 'Basic Pharmacy Math', category: 'Medicine and Health', description: 'Calculate unit dosage drops based on mass.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'mh-t1-10', name: 'Diagnostic Gear Setup', category: 'Medicine and Health', description: 'Calibrate basic monitoring apparatus entries.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'mh-t1-11', name: 'Hygiene Compliance', category: 'Medicine and Health', description: 'Enforce standard infection control barriers.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'mh-t1-12', name: 'Triage Categorization', category: 'Medicine and Health', description: 'Sort clinical priority queues using color indices.', status: 'locked', level: 1, skillLevel: 0 },
+
+  // ── MEDICINE AND HEALTH TIER 2 (18) ─────────────────────────────────
+  { id: 'mh-t2-01', name: 'Pharmacology Mechanics', category: 'Medicine and Health', description: 'Map compound absorption pathways and interactions.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-t1-01', 'mh-t1-02'] },
+  { id: 'mh-t2-02', name: 'Epidemiology Frameworks', category: 'Medicine and Health', description: 'Evaluate localized public transmission trends.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-t1-01', 'mh-t1-04'] },
+  { id: 'mh-t2-03', name: 'Cellular Pathology Analytics', category: 'Medicine and Health', description: 'Identify structural mutations inside tissue arrays.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-t1-04', 'mh-t1-08'] },
+  { id: 'mh-t2-04', name: 'Clinical Lab Evaluations', category: 'Medicine and Health', description: 'Interpret heavy complete metabolic panel indicators.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-t1-02', 'mh-t1-08'] },
+  { id: 'mh-t2-05', name: 'Diagnostic Image Reading', category: 'Medicine and Health', description: 'Isolate fractures and fluid zones on base X-rays.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-t1-01', 'mh-t1-10'] },
+  { id: 'mh-t2-06', name: 'Inpatient Tracking Control', category: 'Medicine and Health', description: 'Govern chronic recovery pathways across wards.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-t1-02', 'mh-t1-07'] },
+  { id: 'mh-t2-07', name: 'Advanced Resuscitation', category: 'Medicine and Health', description: 'Manage complex cardiovascular crisis stabilization configurations.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-t1-03', 'mh-t1-10'] },
+  { id: 'mh-t2-08', name: 'Toxicology Screen Processing', category: 'Medicine and Health', description: 'Identify foreign agents using mass spectrometry sheets.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-t1-08', 'mh-t1-09'] },
+  { id: 'mh-t2-09', name: 'Infectious Disease Isolation', category: 'Medicine and Health', description: 'Design container boundaries for aggressive airborne variables.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-t1-05', 'mh-t1-11'] },
+  { id: 'mh-t2-10', name: 'Surgical Assisting Layouts', category: 'Medicine and Health', description: 'Organize specific structural instrument arrays for clean fields.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-t1-05', 'mh-t1-01'] },
+  { id: 'mh-t2-11', name: 'Pediatric Vital Tracking', category: 'Medicine and Health', description: 'Adjust clinical metrics parsing for developmental targets.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-t1-02', 'mh-t1-09'] },
+  { id: 'mh-t2-12', name: 'Anesthesia Core Calibration', category: 'Medicine and Health', description: 'Monitor basic block drops during localized processes.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-t1-01', 'mh-t1-10'] },
+  { id: 'mh-t2-13', name: 'Wound Care Path Management', category: 'Medicine and Health', description: 'Assess granulation levels and select exact closure bands.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-t1-03', 'mh-t1-11'] },
+  { id: 'mh-t2-14', name: 'Neurological Reflex Profiling', category: 'Medicine and Health', description: 'Execute basic cranial nerve tracking sequences accurately.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-t1-01', 'mh-t1-12'] },
+  { id: 'mh-t2-15', name: 'Psychiatric Intake Assessment', category: 'Medicine and Health', description: 'Identify behavioral shifts using diagnostic index tables.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-t1-02', 'mh-t1-06'] },
+  { id: 'mh-t2-16', name: 'Health Record Interoperability', category: 'Medicine and Health', description: 'Map chart values to central diagnostic structures safely.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-t1-02', 'mh-t1-04'] },
+  { id: 'mh-t2-17', name: 'Outpatient Discharge Structuring', category: 'Medicine and Health', description: 'Build compliance scripts for long term personal recovery.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-t1-06', 'mh-t1-12'] },
+  { id: 'mh-t2-18', name: 'Sanitation Audit Mapping', category: 'Medicine and Health', description: 'Track facility bacterial swabs against baseline contamination thresholds.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-t1-11', 'mh-t1-05'] },
+
+  // ── MEDICINE AND HEALTH TIER 3 (15) ─────────────────────────────────
+  { id: 'mh-t3-01', name: 'Medical Informatics Architect', category: 'Medicine and Health', description: 'Govern regional health networks and encrypted record sharing configurations.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['mh-t2-01', 'mh-t2-02'] },
+  { id: 'mh-t3-02', name: 'Clinical Trials Management', category: 'Medicine and Health', description: 'Draft binding verification trial layouts keeping with target metrics.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['mh-t2-02', 'mh-t2-04'] },
+  { id: 'mh-t3-03', name: 'Facility Systems Governance', category: 'Medicine and Health', description: 'Govern operational flow ceilings across complex clinical spaces.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['mh-t2-01', 'mh-t2-03'] },
+  { id: 'mh-t3-04', name: 'Bioethics Jurisprudence', category: 'Medicine and Health', description: 'Navigate complex litigation constraints and institutional liability factors.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['mh-t2-02', 'mh-t2-06'] },
+  { id: 'mh-t3-05', name: 'Advanced Virology Modeling', category: 'Medicine and Health', description: 'Map particle antibody responses and track mutation mutations maps.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['mh-t2-03', 'mh-t2-04'] },
+  { id: 'mh-t3-06', name: 'Trauma System Leadership', category: 'Medicine and Health', description: 'Orchestrate whole wing responses to massive regional casualty influxes.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['mh-t2-07', 'mh-t2-09'] },
+  { id: 'mh-t3-07', name: 'Oncology Dataset Analysis', category: 'Medicine and Health', description: 'Sequence genomic tumor records matching chemical response trends.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['mh-t2-03', 'mh-t2-05'] },
+  { id: 'mh-t3-08', name: 'Epidemic Containment Strategy', category: 'Medicine and Health', description: 'Author regional health intervention mandates and quarantine models.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['mh-t2-02', 'mh-t2-09'] },
+  { id: 'mh-t3-09', name: 'Pharmacokinetic Synthesis', category: 'Medicine and Health', description: 'Design novel delivery molecules avoiding structural extraction traps.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['mh-t2-01', 'mh-t2-08'] },
+  { id: 'mh-t3-10', name: 'Macro Healthcare Allocation', category: 'Medicine and Health', description: 'Govern multi million dollar infrastructure expansions matching public profiles.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['mh-t2-06', 'mh-t2-16'] },
+  { id: 'mh-t3-11', name: 'Neuro-Tech Interfacing', category: 'Medicine and Health', description: 'Calibrate high resolution deep brain recording interfaces safely.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['mh-t2-05', 'mh-t2-14'] },
+  { id: 'mh-t3-12', name: 'Immunotherapy Architectures', category: 'Medicine and Health', description: 'Design tailored cellular programs targeting specific cell variations.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['mh-t2-03', 'mh-t2-13'] },
+  { id: 'mh-t3-13', name: 'Surgical Robot Orchestration', category: 'Medicine and Health', description: 'Program precision path thresholds for semi autonomous mechanics.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['mh-t2-10', 'mh-t2-12'] },
+  { id: 'mh-t3-14', name: 'Global Pathogen Oversight', category: 'Medicine and Health', description: 'Coordinate transnational tracking responses protecting variant boundaries.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['mh-t2-02', 'mh-t2-18'] },
+  { id: 'mh-t3-15', name: 'Gerontological System Design', category: 'Medicine and Health', description: 'Construct community longevity networks minimizing urgent inpatient returns.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['mh-t2-06', 'mh-t2-11'] },
+
+  // ── CREATIVE AND DESIGN TIER 1 (12) ─────────────────────────────────
+  { id: 'cd-t1-01', name: 'Visual Hierarchy Basics', category: 'Creative and Design', description: 'Apply proportion constraints and base canvas geometries.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'cd-t1-02', name: 'Storytelling Patterns', category: 'Creative and Design', description: 'Structure simple narrative setups and thematic loops.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'cd-t1-03', name: 'Vector Path Mechanics', category: 'Creative and Design', description: 'Manipulate clean bezier shapes and path joints.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'cd-t1-04', name: 'Wireframe Layouts', category: 'Creative and Design', description: 'Draft basic interface nodes and structural points.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'cd-t1-05', name: 'Color Palette Logic', category: 'Creative and Design', description: 'Combine complementary value sets based on standard wheels.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'cd-t1-06', name: 'Typography Selection', category: 'Creative and Design', description: 'Match distinct script classifications to user messaging intent.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'cd-t1-07', name: 'Image Masking Controls', category: 'Creative and Design', description: 'Isolate raster layout zones utilizing basic non-destructive cuts.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'cd-t1-08', name: 'Audio Track Splitting', category: 'Creative and Design', description: 'Isolate background sounds and set structural channel limits.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'cd-t1-09', name: 'Lighting Foundations', category: 'Creative and Design', description: 'Establish clear single-source shadow maps across assets.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'cd-t1-10', name: 'User Interaction Logging', category: 'Creative and Design', description: 'Record click behaviors and view drop points across frameworks.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'cd-t1-11', name: 'Asset Grouping Order', category: 'Creative and Design', description: 'Structure layout catalogs using absolute component naming files.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'cd-t1-12', name: 'Copywriting Foundations', category: 'Creative and Design', description: 'Formulate crisp interface actions avoiding redundant messaging elements.', status: 'locked', level: 1, skillLevel: 0 },
+
+  // ── CREATIVE AND DESIGN TIER 2 (18) ─────────────────────────────────
+  { id: 'cd-t2-01', name: 'User Experience Analysis', category: 'Creative and Design', description: 'Run complete interaction tests and interpret flow maps.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-t1-01', 'cd-t1-04'] },
+  { id: 'cd-t2-02', name: 'Content Strategy Mapping', category: 'Creative and Design', description: 'Coordinate publication calendars across multiple channels.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-t1-01', 'cd-t1-02'] },
+  { id: 'cd-t2-03', name: 'Kinetic Motion Mechanics', category: 'Creative and Design', description: 'Apply real frame pacing variables to layout transitions.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-t1-01', 'cd-t1-03'] },
+  { id: 'cd-t2-04', name: 'Information Display Systems', category: 'Creative and Design', description: 'Organize high density data views into clear navigation structures.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-t1-04', 'cd-t1-06'] },
+  { id: 'cd-t2-05', name: 'Digital Asset Illustration', category: 'Creative and Design', description: 'Render intricate perspective graphics and specific product assets.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-t1-03', 'cd-t1-05'] },
+  { id: 'cd-t2-06', name: 'Non-Linear Video Production', category: 'Creative and Design', description: 'Cut multi-lane capture feeds matching structural pacing points.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-t1-02', 'cd-t1-08'] },
+  { id: 'cd-t2-07', name: 'UI Pattern Componentization', category: 'Creative and Design', description: 'Construct reusable navigation elements containing adaptive properties.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-t1-04', 'cd-t1-11'] },
+  { id: 'cd-t2-08', name: '3D Mesh Optimization', category: 'Creative and Design', description: 'Reduce polygon configurations maximizing real-time application assets.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-t1-03', 'cd-t1-09'] },
+  { id: 'cd-t2-09', name: 'Audience Persona Mapping', category: 'Creative and Design', description: 'Synthesize demographic trends into clear target engagement strategies.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-t1-02', 'cd-t1-10'] },
+  { id: 'cd-t2-10', name: 'Sound Engineering Layouts', category: 'Creative and Design', description: 'Mix sound environments maintaining clean frequency distributions across systems.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-t1-08', 'cd-t1-11'] },
+  { id: 'cd-t2-11', name: 'Vector Brand Blueprinting', category: 'Creative and Design', description: 'Design complex structural mark systems scaling smoothly across outputs.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-t1-03', 'cd-t1-05'] },
+  { id: 'cd-t2-12', name: 'Interactive Prototyping Loops', category: 'Creative and Design', description: 'Wire complex interaction triggers mimicking live platform behaviors.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-t1-04', 'cd-t1-10'] },
+  { id: 'cd-t2-13', name: 'Microcopy Optimization Strategy', category: 'Creative and Design', description: 'A/B test button terminology variants to maximize funnel completion values.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-t1-12', 'cd-t1-10'] },
+  { id: 'cd-t2-14', name: 'Dynamic Lighting Simulation', category: 'Creative and Design', description: 'Bake complex environmental shadows into asset configurations.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-t1-09', 'cd-t1-07'] },
+  { id: 'cd-t2-15', name: 'Layout Hierarchy Stress Testing', category: 'Creative and Design', description: 'Evaluate readability speeds under heavy display data configurations.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-t1-01', 'cd-t1-06'] },
+  { id: 'cd-t2-16', name: 'Commercial Photo Processing', category: 'Creative and Design', description: 'Correct color channels matching exact physical print requirements.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-t1-07', 'cd-t1-05'] },
+  { id: 'cd-t2-17', name: 'Narrative Storyboarding Specs', category: 'Creative and Design', description: 'Map timeline frames to specific cinematic composition blocks.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-t1-02', 'cd-t1-04'] },
+  { id: 'cd-t2-18', name: 'Asset Package Validation', category: 'Creative and Design', description: 'Audit exported visual files against developer format boundaries.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-t1-11', 'cd-t1-03'] },
+
+  // ── CREATIVE AND DESIGN TIER 3 (15) ─────────────────────────────────
+  { id: 'cd-t3-01', name: 'Corporate Brand Identity Systems', category: 'Creative and Design', description: 'Formulate overarching brand design systems and governance codes.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['cd-t2-01', 'cd-t2-02'] },
+  { id: 'cd-t3-02', name: 'Advanced Cinematic Media Orchestration', category: 'Creative and Design', description: 'Direct complex video properties containing advanced effects integrations.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['cd-t2-02', 'cd-t2-03'] },
+  { id: 'cd-t3-03', name: 'Atomic Component Architectures', category: 'Creative and Design', description: 'Engineer multi platform design variable structures linking layouts directly to code bases.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['cd-t2-01', 'cd-t2-04'] },
+  { id: 'cd-t3-04', name: 'Creative Strategy Direction', category: 'Creative and Design', description: 'Govern global marketing campaign execution and art assembly groups.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['cd-t2-02', 'cd-t2-05'] },
+  { id: 'cd-t3-05', name: 'Digital Product Design Leadership', category: 'Creative and Design', description: 'Align interaction variables with enterprise financial retention models.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['cd-t2-01', 'cd-t2-07'] },
+  { id: 'cd-t3-06', name: 'Virtual World Systems Architect', category: 'Creative and Design', description: 'Design vast immersive physical assets optimized for live rendering pipelines.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['cd-t2-08', 'cd-t2-14'] },
+  { id: 'cd-t3-07', name: 'Experience Ecosystem Blueprinting', category: 'Creative and Design', description: 'Map full multi device customer pathways across physical and digital points.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['cd-t2-01', 'cd-t2-09'] },
+  { id: 'cd-t3-08', name: 'Spatial Sound Environment Design', category: 'Creative and Design', description: 'Architect complex tracking audio layers localized dynamically to orientation arrays.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['cd-t2-10', 'cd-t2-06'] },
+  { id: 'cd-t3-09', name: 'Global Asset Deployment Systems', category: 'Creative and Design', description: 'Govern automated optimization arrays delivering variables over localized channels.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['cd-t2-18', 'cd-t2-07'] },
+  { id: 'cd-t3-10', name: 'Corporate Narrative Frameworks', category: 'Creative and Design', description: 'Author defining operational manifestos aligning full public relations structures.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['cd-t2-02', 'cd-t2-17'] },
+  { id: 'cd-t3-11', name: 'Immersive Interface Engineering', category: 'Creative and Design', description: 'Design complex hand tracking interaction models inside device frameworks.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['cd-t2-12', 'cd-t2-03'] },
+  { id: 'cd-t3-12', name: 'Information Display Leadership', category: 'Creative and Design', description: 'Govern global signage or critical interface layout policies for large setups.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['cd-t2-04', 'cd-t2-15'] },
+  { id: 'cd-t3-13', name: 'Brand Capital Monetization', category: 'Creative and Design', description: 'Leverage corporate design assets into secondary commercial licensing lines.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['cd-t2-11', 'cd-t2-09'] },
+  { id: 'cd-t3-14', name: 'Generative Design Engineering', category: 'Creative and Design', description: 'Program custom automated rule arrays generating context layouts on the fly.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['cd-t2-07', 'cd-t2-05'] },
+  { id: 'cd-t3-15', name: 'Cognitive Usability Auditing', category: 'Creative and Design', description: 'Certify high safety control dashboard layouts against extreme cognitive load bounds.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['cd-t2-01', 'cd-t2-13'] },
+
+  // ── SCIENCES AND RESEARCH TIER 1 (12) ───────────────────────────────
+  { id: 'sr-t1-01', name: 'Research Methodology', category: 'Sciences and Research', description: 'Formulate testable hypotheses and isolate baseline control parameters.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'sr-t1-02', name: 'Inferential Statistics Basics', category: 'Sciences and Research', description: 'Calculate sample variances and run simple regression evaluations.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'sr-t1-03', name: 'Laboratory Safety Systems', category: 'Sciences and Research', description: 'Calibrate containment items and execute standard logging processes.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'sr-t1-04', name: 'Data Log Integrity', category: 'Sciences and Research', description: 'Maintain immutable experiment logs tracking precise environmental baselines.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'sr-t1-05', name: 'Pipetting Accuracy', category: 'Sciences and Research', description: 'Execute highly repeatable micro liquid transfers within standard tolerances.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'sr-t1-06', name: 'Scientific Graph Plotting', category: 'Sciences and Research', description: 'Render distribution variances using standard visualization packages.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'sr-t1-07', name: 'Stoichiometric Math', category: 'Sciences and Research', description: 'Balance molecular reaction equations and target mass outputs.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'sr-t1-08', name: 'Spectrophotometer Setup', category: 'Sciences and Research', description: 'Calibrate baseline absorption curves across standard target samples.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'sr-t1-09', name: 'Centrifugation Routines', category: 'Sciences and Research', description: 'Separate fluid mixture layers using precise rotation profiles.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'sr-t1-10', name: 'Calculus Primitives', category: 'Sciences and Research', description: 'Solve standard single variable derivative calculations.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'sr-t1-11', name: 'Literature Indexing', category: 'Sciences and Research', description: 'Query and sort peer-reviewed documentation databases efficiently.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'sr-t1-12', name: 'Microscope Operations', category: 'Sciences and Research', description: 'Mount and adjust optical focus controls tracking live structures.', status: 'locked', level: 1, skillLevel: 0 },
+
+  // ── SCIENCES AND RESEARCH TIER 2 (18) ───────────────────────────────
+  { id: 'sr-t2-01', name: 'Experimental Lab Execution', category: 'Sciences and Research', description: 'Isolate organic compound targets using clean distillation setups.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-t1-01', 'sr-t1-03'] },
+  { id: 'sr-t2-02', name: 'Data Science Modeling', category: 'Sciences and Research', description: 'Clean multi variable data metrics and construct predictive trend sets.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-t1-01', 'sr-t1-02'] },
+  { id: 'sr-t2-03', name: 'Organic Structure Synthesis', category: 'Sciences and Research', description: 'Map reaction pathways and evaluate binding energy shifts.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-t1-03', 'sr-t1-04'] },
+  { id: 'sr-t2-04', name: 'Computational Simulation Scripts', category: 'Sciences and Research', description: 'Write scripts tracking numeric behaviors over continuous timelines.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-t1-02', 'sr-t1-04'] },
+  { id: 'sr-t2-05', name: 'Molecular Genetics Mapping', category: 'Sciences and Research', description: 'Analyze target replication setups and transcription conditions.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-t1-01', 'sr-t1-05'] },
+  { id: 'sr-t2-06', name: 'Advanced Differential Calculus', category: 'Sciences and Research', description: 'Solve multi variable field variations and boundary conditions.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-t1-02', 'sr-t1-10'] },
+  { id: 'sr-t2-07', name: 'Chromatography Profiling', category: 'Sciences and Research', description: 'Purify complex mixtures using high-pressure liquid equipment.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-t1-05', 'sr-t1-08'] },
+  { id: 'sr-t2-08', name: 'Statistical Power Budgeting', category: 'Sciences and Research', description: 'Determine optimal sample sizing thresholds avoiding validation errors.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-t1-02', 'sr-t1-06'] },
+  { id: 'sr-t2-09', name: 'Kinematic Force Modeling', category: 'Sciences and Research', description: 'Calculate particle velocity equations through varying media.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-t1-10', 'sr-t1-06'] },
+  { id: 'sr-t2-10', name: 'Bioassay Customization', category: 'Sciences and Research', description: 'Configure enzyme target tests measuring relative inhibition curves.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-t1-08', 'sr-t1-09'] },
+  { id: 'sr-t2-11', name: 'Meta-Analysis Synthetics', category: 'Sciences and Research', description: 'Aggregate diverse study results adjusting for demographic biases.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-t1-11', 'sr-t1-02'] },
+  { id: 'sr-t2-12', name: 'Recombinant DNA Layouts', category: 'Sciences and Research', description: 'Splice target vector blocks into standard plasmid structures.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-t1-12', 'sr-t1-05'] },
+  { id: 'sr-t2-13', name: 'Thermodynamic Cycle Tracking', category: 'Sciences and Research', description: 'Map enthalpy changes inside pressurized chemical enclosures.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-t1-07', 'sr-t1-03'] },
+  { id: 'sr-t2-14', name: 'X-Ray Diffraction Parsing', category: 'Sciences and Research', description: 'Calculate spatial lattice positions from scattering light records.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-t1-08', 'sr-t1-12'] },
+  { id: 'sr-t2-15', name: 'Field Sample Sourcing', category: 'Sciences and Research', description: 'Collect environmental artifacts ensuring zero external cross contamination.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-t1-03', 'sr-t1-11'] },
+  { id: 'sr-t2-16', name: 'Linear Algebra Transformations', category: 'Sciences and Research', description: 'Process heavy multi dimension matrix operations and eigenvalues.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-t1-10'] },
+  { id: 'sr-t2-17', name: 'Spectroscopy Characterization', category: 'Sciences and Research', description: 'Identify unknown structural bonds from infrared resonance dips.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-t1-08', 'sr-t1-04'] },
+  { id: 'sr-t2-18', name: 'Peer Review Drafting', category: 'Sciences and Research', description: 'Structure experiment reports matching academic compliance formatting.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-t1-11', 'sr-t1-04'] },
+
+  // ── SCIENCES AND RESEARCH TIER 3 (15) ───────────────────────────────
+  { id: 'sr-t3-01', name: 'Genomic Bio-Informatics Systems', category: 'Sciences and Research', description: 'Process high-throughput sequencing data arrays using alignment algorithms.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['sr-t2-01', 'sr-t2-02'] },
+  { id: 'sr-t3-02', name: 'Eco-System Impact Assessments', category: 'Sciences and Research', description: 'Model long range chemical dispersion behaviors across geography vectors.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['sr-t2-02', 'sr-t2-03'] },
+  { id: 'sr-t3-03', name: 'Quantum Mechanics & Kinematics', category: 'Sciences and Research', description: 'Model atomic systems, energy configurations, and state probabilities.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['sr-t2-04', 'sr-t2-06'] },
+  { id: 'sr-t3-04', name: 'Machine Learning Algorithm Research', category: 'Sciences and Research', description: 'Develop greenfield loss metrics models optimizing convergence thresholds.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['sr-t2-02', 'sr-t2-04'] },
+  { id: 'sr-t3-05', name: 'Bioprocess System Scaleups', category: 'Sciences and Research', description: 'Translate bench validation mechanics to large production vessels.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['sr-t2-01', 'sr-t2-03'] },
+  { id: 'sr-t3-06', name: 'Astrophysical Fluid Dynamics', category: 'Sciences and Research', description: 'Model high temperature plasma behaviors using magnetohydrodynamic code.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['sr-t2-04', 'sr-t2-09'] },
+  { id: 'sr-t3-07', name: 'Neuro-Synaptic Mapping', category: 'Sciences and Research', description: 'Track live electrical signaling metrics across dense tissue setups.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['sr-t2-05', 'sr-t2-12'] },
+  { id: 'sr-t3-08', name: 'Macro Climate Vector Engineering', category: 'Sciences and Research', description: 'Simulate oceanic atmospheric heat transfer variations over multi decade bands.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['sr-t2-04', 'sr-t2-15'] },
+  { id: 'sr-t3-09', name: 'Directed Catalyst Synthesis', category: 'Sciences and Research', description: 'Configure transition state metals lowering reaction energy limits.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['sr-t2-03', 'sr-t2-07'] },
+  { id: 'sr-t3-10', name: 'Epidemiological Hazard Architecture', category: 'Sciences and Research', description: 'Design predictive models tracking regional mutation rates under selection pressures.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['sr-t2-02', 'sr-t2-08'] },
+  { id: 'sr-t3-11', name: 'Solid State Lattice Optimization', category: 'Sciences and Research', description: 'Architect crystal matrix configurations maximizing electronic electron flows.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['sr-t2-14', 'sr-t2-17'] },
+  { id: 'sr-t3-12', name: 'Nuclear Resonance Tomography', category: 'Sciences and Research', description: 'Deconstruct structural spin relaxation properties for unknown heavy compounds.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['sr-t2-17', 'sr-t2-06'] },
+  { id: 'sr-t3-13', name: 'Stochastic Population Logistics', category: 'Sciences and Research', description: 'Model drift variations inside isolated eco spaces using random matrices.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['sr-t2-08', 'sr-t2-16'] },
+  { id: 'sr-t3-14', name: 'High Volatility Gas Kinetics', category: 'Sciences and Research', description: 'Govern detonation wave pathways inside super critical engine architectures.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['sr-t2-13', 'sr-t2-09'] },
+  { id: 'sr-t3-15', name: 'Institutional Research Governance', category: 'Sciences and Research', description: 'Direct compliance standards for multi center international verification studies.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['sr-t2-18', 'sr-t2-11'] },
+
+  // ── EDUCATION AND SOCIAL SCIENCES TIER 1 (12) ───────────────────────
+  { id: 'es-t1-01', name: 'Interpersonal Dynamics', category: 'Education and Social Sciences', description: 'Apply active listening behaviors and settle small group friction points.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'es-t1-02', name: 'Behavioral Psychology Primitives', category: 'Education and Social Sciences', description: 'Map fundamental learning reinforcement mechanics and feedback responses.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'es-t1-03', name: 'Instructional Delivery', category: 'Education and Social Sciences', description: 'Present educational information clearly keeping with timeline targets.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'es-t1-04', name: 'Socio-Demographic Recording', category: 'Education and Social Sciences', description: 'Log population data parameters avoiding structural recording errors.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'es-t1-05', name: 'Lesson Visual Formatting', category: 'Education and Social Sciences', description: 'Build clear educational content displays mapping to baseline modules.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'es-t1-06', name: 'Student Attendance Tracking', category: 'Education and Social Sciences', description: 'Maintain systematic verification histories matching institutional targets.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'es-t1-07', name: 'Group Talk Facilitation', category: 'Education and Social Sciences', description: 'Guide small roundtable conversations keeping to focus definitions.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'es-t1-08', name: 'Basic Grading Routines', category: 'Education and Social Sciences', description: 'Evaluate regular task items following binary target answer sheets.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'es-t1-09', name: 'Community Need Polling', category: 'Education and Social Sciences', description: 'Distribute structured local surveys capturing simple requirement counts.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'es-t1-10', name: 'Classroom Physical Optimization', category: 'Education and Social Sciences', description: 'Arrange spatial setups maximizing engagement metrics and safety rules.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'es-t1-11', name: 'Case Note Redaction', category: 'Education and Social Sciences', description: 'Format field interaction notes protecting core user identity variables.', status: 'locked', level: 1, skillLevel: 0 },
+  { id: 'es-t1-12', name: 'Crisis Referral Routines', category: 'Education and Social Sciences', description: 'Identify danger indicators and route users to specialized support spaces.', status: 'locked', level: 1, skillLevel: 0 },
+
+  // ── EDUCATION AND SOCIAL SCIENCES TIER 2 (18) ───────────────────────
+  { id: 'es-t2-01', name: 'Curriculum Layout Design', category: 'Education and Social Sciences', description: 'Build target course units containing distinct operational milestone paths.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-t1-01', 'es-t1-03'] },
+  { id: 'es-t2-02', name: 'Social Intervention Planning', category: 'Education and Social Sciences', description: 'Coordinate field community asset developments and manage local approvals.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-t1-01', 'es-t1-04'] },
+  { id: 'es-t2-03', name: 'Competency Evaluation Metrics', category: 'Education and Social Sciences', description: 'Author balanced verification tests utilizing rubric tracking matrices.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-t1-03', 'es-t1-02'] },
+  { id: 'es-t2-04', name: 'Behavioral Guidance Support', category: 'Education and Social Sciences', description: 'Conduct structured milestone tracking conversations and adjustment strategies.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-t1-02', 'es-t1-01'] },
+  { id: 'es-t2-05', name: 'Digital Learning Management Platforms', category: 'Education and Social Sciences', description: 'Configure remote testing structures and manage tracking data rows.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-t1-03', 'es-t1-06'] },
+  { id: 'es-t2-06', name: 'Qualitative Field Recording', category: 'Education and Social Sciences', description: 'Conduct ethnographic interviews and apply structural code categorizations.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-t1-04', 'es-t1-07'] },
+  { id: 'es-t2-07', name: 'Adaptive Training Scaffolding', category: 'Education and Social Sciences', description: 'Modify target material difficulty dynamically matching user speed variables.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-t1-03', 'es-t1-05'] },
+  { id: 'es-t2-08', name: 'Special Needs Accommodation', category: 'Education and Social Sciences', description: 'Restructure sensory and physical tasks matching specific access profiles.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-t1-02', 'es-t1-10'] },
+  { id: 'es-t2-09', name: 'Youth Mentorship Frameworks', category: 'Education and Social Sciences', description: 'Direct structural developmental activities targeting high risk youth groups.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-t1-01', 'es-t1-12'] },
+  { id: 'es-t2-10', name: 'Survey Index Validation', category: 'Education and Social Sciences', description: 'Verify question consistency parameters avoiding survey design loops.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-t1-09', 'es-t1-04'] },
+  { id: 'es-t2-11', name: 'Family Casework Logistics', category: 'Education and Social Sciences', description: 'Manage home visitation intervals and compile legal status records.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-t1-11', 'es-t1-01'] },
+  { id: 'es-t2-12', name: 'Peer Support Architecture', category: 'Education and Social Sciences', description: 'Train internal advocates to deliver basic wellness syncs safely.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-t1-07', 'es-t1-12'] },
+  { id: 'es-t2-13', name: 'Educational Budget Mapping', category: 'Education and Social Sciences', description: 'Balance materials allocations against campus operational lines.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-t1-06', 'es-t1-10'] },
+  { id: 'es-t2-14', name: 'Media Literacy Design', category: 'Education and Social Sciences', description: 'Build training scripts evaluating digital information intent parameters.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-t1-05', 'es-t1-02'] },
+  { id: 'es-t2-15', name: 'Community Asset Mapping', category: 'Education and Social Sciences', description: 'Inventory non profit support options inside target postal codes.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-t1-09', 'es-t1-11'] },
+  { id: 'es-t2-16', name: 'Language Acquisition Scaffolding', category: 'Education and Social Sciences', description: 'Deploy phonetic development steps for secondary language users.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-t1-03', 'es-t1-02'] },
+  { id: 'es-t2-17', name: 'Restorative Justice Circles', category: 'Education and Social Sciences', description: 'Mediate formal accountability sessions following community rule violations.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-t1-01', 'es-t1-07'] },
+  { id: 'es-t2-18', name: 'Educational Performance Analysis', category: 'Education and Social Sciences', description: 'Map test score cohorts tracking long term knowledge retention patterns.', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-t1-08', 'es-t1-06'] },
+
+  // ── EDUCATION AND SOCIAL SCIENCES TIER 3 (15) ───────────────────────
+  { id: 'es-t3-01', name: 'Social Welfare Policy Analysis', category: 'Education and Social Sciences', description: 'Evaluate national legislative structures and optimize institutional resource deployments.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['es-t2-01', 'es-t2-02'] },
+  { id: 'es-t3-02', name: 'Institutional Facility Management', category: 'Education and Social Sciences', description: 'Govern operational compliance and long range human capital across academic complexes.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['es-t2-02', 'es-t2-04'] },
+  { id: 'es-t3-03', name: 'Macro Remote Learning Infrastructures', category: 'Education and Social Sciences', description: 'Architect country wide remote instruction architectures and professional upskilling paths.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['es-t2-01', 'es-t2-05'] },
+  { id: 'es-t3-04', name: 'NGO Strategic Governance', category: 'Education and Social Sciences', description: 'Govern transnational development budgets and multi agency compliance reporting pipelines.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['es-t2-01', 'es-t2-02'] },
+  { id: 'es-t3-05', name: 'Longitudinal Impact Evaluation', category: 'Education and Social Sciences', description: 'Deploy large scale statistical tracking arrays verifying real world social investment yields.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['es-t2-03', 'es-t2-06'] },
+  { id: 'es-t3-06', name: 'Pedagogical Model Innovation', category: 'Education and Social Sciences', description: 'Author novel cognitive transfer methodologies validated across large test cohorts.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['es-t2-01', 'es-t2-07'] },
+  { id: 'es-t3-07', name: 'Clinical Social Work Direction', category: 'Education and Social Sciences', description: 'Supervise systemic therapeutic mental health intervention paths across networks.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['es-t2-04', 'es-t2-11'] },
+  { id: 'es-t3-08', name: 'National Assessment Authorship', category: 'Education and Social Sciences', description: 'Design standardized diagnostic testing frameworks used for public verification.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['es-t2-03', 'es-t2-18'] },
+  { id: 'es-t3-09', name: 'Urban Community Renewal Strategy', category: 'Education and Social Sciences', description: 'Architect structural localized economic development and housing stability initiatives.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['es-t2-02', 'es-t2-15'] },
+  { id: 'es-t3-10', name: 'Digital Inclusion Architecture', category: 'Education and Social Sciences', description: 'Deploy macro communication access platforms targeting isolated regional populations.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['es-t2-05', 'es-t2-14'] },
+  { id: 'es-t3-11', name: 'Stochastic Demography Projections', category: 'Education and Social Sciences', description: 'Simulate structural population shifts to determine multi decade school density plans.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['es-t2-06', 'es-t2-10'] },
+  { id: 'es-t3-12', name: 'Conflict Reconciliation Leadership', category: 'Education and Social Sciences', description: 'Mediate border or civil alignment disputes between deep institutional factions.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['es-t2-17', 'es-t2-04'] },
+  { id: 'es-t3-13', name: 'Special Education Policy Controls', category: 'Education and Social Sciences', description: 'Govern structural funding and civil access compliance standards at state margins.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['es-t2-08', 'es-t2-13'] },
+  { id: 'es-t3-14', name: 'Bilingual System Engineering', category: 'Education and Social Sciences', description: 'Architect macro immersion structures across public education networks.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['es-t2-16', 'es-t2-01'] },
+  { id: 'es-t3-15', name: 'Human Rights Advocacy Governance', category: 'Education and Social Sciences', description: 'Direct legal monitoring networks tracing compliance records across international boundaries.', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['es-t2-06', 'es-t2-09'] },
+];
+
+export const JOBS: Job[] = [
+  // ── ENGINEERING & TECH (18 JOBS) ──────────────────────────────────
+  { id: 'j-et-01', title: 'Junior Frontend Developer', description: 'Build application views.', requiredSkillIds: ['et-t1-01', 'et-t1-10', 'et-t1-03'] },
+  { id: 'j-et-02', title: 'Junior Backend Developer', description: 'Maintain data routing lines.', requiredSkillIds: ['et-t1-01', 'et-t1-06', 'et-t1-04'] },
+  { id: 'j-et-03', title: 'QA Automation Engineer', description: 'Write automated validation tasks.', requiredSkillIds: ['et-t1-08', 'et-t1-11', 'et-t2-06'] },
+  { id: 'j-et-04', title: 'Systems Analyst', description: 'Evaluate computing configurations.', requiredSkillIds: ['et-t1-05', 'et-t1-12', 'et-t2-01'] },
+  { id: 'j-et-05', title: 'Database Administrator', description: 'Optimize data catalog engines.', requiredSkillIds: ['et-t1-06', 'et-t2-03', 'et-t2-12'] },
+  { id: 'j-et-06', title: 'Cloud Support Specialist', description: 'Monitor live runtime servers.', requiredSkillIds: ['et-t1-04', 'et-t2-02', 'et-t2-14'] },
+  { id: 'j-et-07', title: 'Full Stack Engineer', description: 'Deliver complete web applications.', requiredSkillIds: ['et-t2-01', 'et-t2-05', 'et-t2-08'] },
+  { id: 'j-et-08', title: 'Mobile Applications Engineer', description: 'Build mobile target views.', requiredSkillIds: ['et-t1-01', 'et-t2-04', 'et-t2-08'] },
+  { id: 'j-et-09', title: 'DevOps Build Engineer', description: 'Automate software delivery runs.', requiredSkillIds: ['et-t1-02', 'et-t2-11', 'et-t2-07'] },
+  { id: 'j-et-10', title: 'Information Security Officer', description: 'Audit code for vulnerability exposures.', requiredSkillIds: ['et-t1-09', 'et-t2-09', 'et-t2-17'] },
+  { id: 'j-et-11', title: 'Solutions Architect', description: 'Design complex enterprise layouts.', requiredSkillIds: ['et-t2-01', 'et-t2-05', 'et-t3-01'] },
+  { id: 'j-et-12', title: 'AI Integration Specialist', description: 'Embed context retrieval pipelines.', requiredSkillIds: ['et-t2-12', 'et-t2-13', 'j-et-07', 'et-t3-02'] },
+  { id: 'j-et-13', title: 'Site Reliability Architect', description: 'Maintain cluster system lifespans.', requiredSkillIds: ['et-t2-10', 'et-t2-15', 'et-t3-06'] },
+  { id: 'j-et-14', title: 'Data Platform Engineer', description: 'Construct processing pipelines.', requiredSkillIds: ['et-t2-03', 'et-t2-18', 'et-t3-05'] },
+  { id: 'j-et-15', title: 'Principal Infrastructure Lead', category: 'Engineering and Tech', description: 'Govern global cloud configurations.', requiredSkillIds: ['et-t3-03', 'et-t3-11'] } as any,
+  { id: 'j-et-16', title: 'SecOps Director', description: 'Direct boundaries protection frameworks.', requiredSkillIds: ['et-t3-04', 'et-t3-13'] },
+  { id: 'j-et-17', title: 'Core UI Framework Author', description: 'Design highly performant display nodes.', requiredSkillIds: ['et-t2-16', 'et-t3-12'] },
+  { id: 'j-et-18', title: 'Chief Technology Officer', description: 'Govern full scope tech strategy.', requiredSkillIds: ['et-t3-01', 'et-t3-06', 'et-t3-15'] },
+
+
+  // ── BUSINESS & FINANCE (18 JOBS) ──────────────────────────────────
+  { id: 'j-bf-01', title: 'Junior Accountant', description: 'Log balance transformations.', requiredSkillIds: ['bf-t1-01', 'bf-t1-03', 'bf-t1-06'] },
+  { id: 'j-bf-02', title: 'Sales Rep', description: 'Advance tracking software items.', requiredSkillIds: ['bf-t1-08', 'bf-t1-12', 'bf-t1-02'] },
+  { id: 'j-bf-03', title: 'Financial Analyst', description: 'Analyze capital burn loops.', requiredSkillIds: ['bf-t1-03', 'bf-t2-01', 'bf-t2-08'] },
+  { id: 'j-bf-04', title: 'Tax Accountant', description: 'File value added tax demands.', requiredSkillIds: ['bf-t1-01', 'bf-t2-03', 'bf-t2-09'] },
+  { id: 'j-bf-05', title: 'Logistics Planner', description: 'Coordinate transport inventory nodes.', requiredSkillIds: ['bf-t1-10', 'bf-t2-04', 'bf-t2-14'] },
+  { id: 'j-bf-06', title: 'BI Developer', description: 'Convert records into dashboard trends.', requiredSkillIds: ['bf-t1-03', 'bf-t2-05', 'bf-t2-16'] },
+  { id: 'j-bf-07', title: 'Associate Product Manager', description: 'Translate logs to roadmap steps.', requiredSkillIds: ['bf-t1-04', 'bf-t2-06', 'bf-t2-11'] },
+  { id: 'j-bf-08', title: 'Account Manager', description: 'Grow client portfolio options.', requiredSkillIds: ['bf-t1-12', 'bf-t2-07', 'bf-t2-18'] },
+  { id: 'j-bf-09', title: 'Procurement Officer', description: 'Draft supplier service terms.', requiredSkillIds: ['bf-t1-02', 'bf-t2-10', 'bf-t2-14'] },
+  { id: 'j-bf-10', title: 'Treasury Analyst', description: 'Optimize liquid cash balances.', requiredSkillIds: ['bf-t1-05', 'bf-t2-12', 'bf-t2-13'] },
+  { id: 'j-bf-11', title: 'Corporate Attorney', description: 'Verify business registration matrices.', requiredSkillIds: ['bf-t2-02', 'bf-t2-17', 'bf-t3-13'] },
+  { id: 'j-bf-12', title: 'Investment Associate', description: 'Calculate precise valuation indices.', requiredSkillIds: ['bf-t2-01', 'bf-t2-15', 'bf-t3-01'] },
+  { id: 'j-bf-13', title: 'Strategy Consultant', description: 'Design entry structures for markets.', requiredSkillIds: ['bf-t2-01', 'bf-t2-11', 'bf-t3-02'] },
+  { id: 'j-bf-14', title: 'Risk Manager', description: 'Identify systemic market vulnerabilities.', requiredSkillIds: ['bf-t2-13', 'bf-t3-03', 'bf-t3-12'] },
+  { id: 'j-bf-15', title: 'Product Director', description: 'Optimize user life conversions.', requiredSkillIds: ['bf-t2-06', 'bf-t3-04', 'bf-t3-10'] },
+  { id: 'j-bf-16', title: 'Global Supply Chain Head', description: 'Architect intercontinental logistics runs.', requiredSkillIds: ['bf-t2-04', 'bf-t3-07', 'bf-t3-14'] },
+  { id: 'j-bf-17', title: 'M&A Advisory Lead', description: 'Structure complex transaction distributions.', requiredSkillIds: ['bf-t2-15', 'bf-t3-01', 'bf-t3-06'] },
+  { id: 'j-bf-18', title: 'Chief Financial Officer', description: 'Govern asset allocation targets.', requiredSkillIds: ['bf-t3-01', 'bf-t3-05', 'bf-t3-12', 'bf-t3-15'] },
+
+  // ── MEDICINE & HEALTH (18 JOBS) ───────────────────────────────────
+  { id: 'j-mh-01', title: 'Clinical Assistant', description: 'Log vitals and demographics.', requiredSkillIds: ['mh-t1-02', 'mh-t1-06', 'mh-t1-11'] },
+  { id: 'j-mh-02', title: 'Emergency Responder', description: 'Apply emergency response configurations.', requiredSkillIds: ['mh-t1-03', 'mh-t1-12', 'mh-t2-07'] },
+  { id: 'j-mh-03', title: 'Lab Technician', description: 'Handle and process specimens.', requiredSkillIds: ['mh-t1-05', 'mh-t1-08', 'mh-t2-04'] },
+  { id: 'j-mh-04', title: 'Staff Nurse', description: 'Govern chronic ward pathways.', requiredSkillIds: ['mh-t1-02', 'mh-t1-07', 'mh-t2-06'] },
+  { id: 'j-mh-05', title: 'Pharmacy Technician', description: 'Calculate compound dose values.', requiredSkillIds: ['mh-t1-09', 'mh-t1-04', 'mh-t2-01'] },
+  { id: 'j-mh-06', title: 'Radiologic Technologist', description: 'Isolate fractures using apparatus.', requiredSkillIds: ['mh-t1-01', 'mh-t1-10', 'mh-t2-05'] },
+  { id: 'j-mh-07', title: 'Surgical Technician', description: 'Organize dynamic instrument arrays.', requiredSkillIds: ['mh-t1-05', 'mh-t2-10', 'mh-t2-13'] },
+  { id: 'j-mh-08', title: 'Health Data Analyst', description: 'Map chart records safely.', requiredSkillIds: ['mh-t1-02', 'mh-t2-16', 'mh-t2-04'] },
+  { id: 'j-mh-09', title: 'Epidemiologist', description: 'Evaluate public transmission trends.', requiredSkillIds: ['mh-t1-04', 'mh-t2-02', 'mh-t2-09'] },
+  { id: 'j-mh-10', title: 'Toxicologist', description: 'Identify foreign agent structures.', requiredSkillIds: ['mh-t1-08', 'mh-t2-08', 'mh-t3-09'] },
+  { id: 'j-mh-11', title: 'Clinical Trial Coordinator', description: 'Draft binding verification trials.', requiredSkillIds: ['mh-t2-04', 'mh-t2-11', 'mh-t3-02'] },
+  { id: 'j-mh-12', title: 'Hospital Director', description: 'Govern operational flow ceilings.', requiredSkillIds: ['mh-t2-06', 'mh-t2-18', 'mh-t3-03'] },
+  { id: 'j-mh-13', title: 'Chief Medical Officer', description: 'Navigate litigation and liability loops.', requiredSkillIds: ['mh-t2-02', 'mh-t3-04', 'mh-t3-10'] },
+  { id: 'j-mh-14', title: 'Virology Researcher', description: 'Map particle antibody mutations.', requiredSkillIds: ['mh-t2-03', 'mh-t3-05', 'mh-t3-12'] },
+  { id: 'j-mh-15', title: 'Trauma Director', description: 'Orchestrate whole wing contingencies.', requiredSkillIds: ['mh-t2-07', 'mh-t3-06', 'mh-t3-08'] },
+  { id: 'j-mh-16', title: 'Oncology Dataset Lead', description: 'Sequence genomic data variations.', requiredSkillIds: ['mh-t2-03', 'mh-t2-05', 'mh-t3-07'] },
+  { id: 'j-mh-17', title: 'Medical Informatics Architect', description: 'Govern regional health networks.', requiredSkillIds: ['mh-t2-16', 'mh-t3-01', 'mh-t3-11'] },
+  { id: 'j-mh-18', title: 'Autonomous Systems Surgeon', description: 'Program precision tracking path boundaries.', requiredSkillIds: ['mh-t2-10', 'mh-t2-12', 'mh-t3-13'] },
+
+  // ── CREATIVE & DESIGN (18 JOBS) ───────────────────────────────────
+  { id: 'j-cd-01', title: 'Junior Graphic Designer', description: 'Apply base canvas proportions.', requiredSkillIds: ['cd-t1-01', 'cd-t1-03', 'cd-t1-05'] },
+  { id: 'j-cd-02', title: 'Junior Copywriter', description: 'Formulate crisp action lines.', requiredSkillIds: ['cd-t1-02', 'cd-t1-12', 'cd-t1-06'] },
+  { id: 'j-cd-03', title: 'UI Wireframer', description: 'Draft initial interaction nodes.', requiredSkillIds: ['cd-t1-04', 'cd-t1-11', 'cd-t2-07'] },
+  { id: 'j-cd-04', title: 'Video Editor', description: 'Cut multi lane sequence inputs.', requiredSkillIds: ['cd-t1-07', 'cd-t1-08', 'cd-t2-06'] },
+  { id: 'j-cd-05', title: 'UX Researcher', description: 'Interpret system flow maps.', requiredSkillIds: ['cd-t1-10', 'cd-t2-01', 'cd-t2-09'] },
+  { id: 'j-cd-06', title: 'Content Planner', description: 'Coordinate multichannel layout matrix arrays.', requiredSkillIds: ['cd-t1-02', 'cd-t2-02', 'cd-t2-13'] },
+  { id: 'j-cd-07', title: 'Motion Designer', description: 'Apply real frame pacing.', requiredSkillIds: ['cd-t1-03', 'cd-t2-03', 'cd-t2-12'] },
+  { id: 'j-cd-08', title: 'Digital Illustrator', description: 'Render intricate object graphics.', requiredSkillIds: ['cd-t1-05', 'cd-t2-05', 'cd-t2-16'] },
+  { id: 'j-cd-09', title: '3D Asset Optimizer', description: 'Reduce layout polygon counts.', requiredSkillIds: ['cd-t1-09', 'cd-t2-08', 'cd-t2-14'] },
+  { id: 'j-cd-10', title: 'Sound Designer', description: 'Mix environment frequency spaces.', requiredSkillIds: ['cd-t1-08', 'cd-t2-10', 'cd-t2-18'] },
+  { id: 'j-cd-11', title: 'Information Architect', description: 'Organize high density views.', requiredSkillIds: ['cd-t2-04', 'cd-t2-15', 'cd-t3-12'] },
+  { id: 'j-cd-12', title: 'Brand Identity Systems Lead', description: 'Formulate macro identity rules.', requiredSkillIds: ['cd-t2-11', 'cd-t3-01', 'cd-t3-13'] },
+  { id: 'j-cd-13', title: 'Creative Director', description: 'Govern global marketing campaigns.', requiredSkillIds: ['cd-t2-02', 'cd-t3-02', 'cd-t3-04'] },
+  { id: 'j-cd-14', title: 'Atomic Design Engineer', description: 'Link system layout variables.', requiredSkillIds: ['cd-t2-07', 'cd-t3-03', 'cd-t3-09'] },
+  { id: 'j-cd-15', title: 'Product Design Director', description: 'Align interactions with margins.', requiredSkillIds: ['cd-t2-01', 'cd-t3-05', 'cd-t3-15'] },
+  { id: 'j-cd-16', title: 'Immersive Environment Architect', description: 'Design massive virtual layers.', requiredSkillIds: ['cd-t2-08', 'cd-t3-06', 'cd-t3-11'] },
+  { id: 'j-cd-17', title: 'Corporate Narrative Director', description: 'Author defining core statements.', requiredSkillIds: ['cd-t2-17', 'cd-t3-10', 'cd-t3-07'] },
+  { id: 'j-cd-18', title: 'Generative Design Architect', description: 'Program custom loop algorithms.', requiredSkillIds: ['cd-t2-05', 'cd-t3-14', 'cd-t3-08'] },
+
+  // ── SCIENCES & RESEARCH (18 JOBS) ─────────────────────────────────
+  { id: 'j-sr-01', title: 'Data Log Clerk', description: 'Maintain environmental data logs.', requiredSkillIds: ['sr-t1-04', 'sr-t1-06', 'sr-t1-11'] },
+  { id: 'j-sr-02', title: 'Laboratory Assistant', description: 'Calibrate containment setups safely.', requiredSkillIds: ['sr-t1-03', 'sr-t1-05', 'sr-t1-09'] },
+  { id: 'j-sr-03', title: 'Research Analyst', description: 'Calculate data deviation records.', requiredSkillIds: ['sr-t1-01', 'sr-t1-02', 'sr-t2-08'] },
+  { id: 'j-sr-04', title: 'Organic Chemist', description: 'Isolate target compounds cleanly.', requiredSkillIds: ['sr-t1-07', 'sr-t2-01', 'sr-t2-03'] },
+  { id: 'sr-jr-05', title: 'Simulation Programmer', description: 'Write script variable maps.', requiredSkillIds: ['sr-t1-02', 'sr-t2-04', 'sr-t2-16'] },
+  { id: 'j-sr-06', title: 'Genetics Analyst', description: 'Analyze baseline sequence structures.', requiredSkillIds: ['sr-t1-12', 'sr-t2-05', 'sr-t2-12'] },
+  { id: 'j-sr-07', title: 'Chromatographer', description: 'Purify high pressure mixtures.', requiredSkillIds: ['sr-t1-05', 'sr-t2-07', 'sr-t2-17'] },
+  { id: 'j-sr-08', title: 'Physical Force Modeler', description: 'Calculate target movement variables.', requiredSkillIds: ['sr-t1-10', 'sr-t2-09', 'sr-t2-13'] },
+  { id: 'j-sr-09', title: 'Bioinformatician', description: 'Process high throughput arrays.', requiredSkillIds: ['sr-t2-02', 'sr-t2-05', 'sr-t3-01'] },
+  { id: 'j-sr-10', title: 'Environmental Consultant', description: 'Model long range chemical dispersion.', requiredSkillIds: ['sr-t2-15', 'sr-t3-02', 'sr-t2-03'] },
+  { id: 'j-sr-11', title: 'Quantum Kinematics Lead', description: 'Model subatomic state variations.', requiredSkillIds: ['sr-t2-06', 'sr-t3-03', 'sr-t2-09'] },
+  { id: 'j-sr-12', title: 'ML Research Scientist', description: 'Optimize novel cost equations.', requiredSkillIds: ['sr-t2-04', 'sr-t3-04', 'sr-t2-16'] },
+  { id: 'j-sr-13', title: 'Bioprocess Scaleup Engineer', description: 'Translate bench setups to massive vessels.', requiredSkillIds: ['sr-t2-01', 'sr-t3-05', 'sr-t2-13'] },
+  { id: 'j-sr-14', title: 'Astrophysical Fluid Lead', description: 'Simulate high temperature plasma paths.', requiredSkillIds: ['sr-t2-04', 'sr-t3-06', 'sr-t2-06'] },
+  { id: 'j-sr-15', title: 'Neuro-Synaptic Architect', description: 'Track electrical signaling metrics.', requiredSkillIds: ['sr-t2-12', 'sr-t3-07', 'sr-t2-05'] },
+  { id: 'j-sr-16', title: 'Climate System Modeler', description: 'Simulate atmospheric heat variables.', requiredSkillIds: ['sr-t2-04', 'sr-t3-08', 'sr-t2-15'] },
+  { id: 'j-sr-17', title: 'Solid State Physicist', description: 'Architect electronic lattice structures.', requiredSkillIds: ['sr-t2-14', 'sr-t3-11', 'sr-t3-12'] },
+  { id: 'j-sr-18', title: 'Scientific Director', description: 'Govern multi center study protocols.', requiredSkillIds: ['sr-t2-18', 'sr-t2-11', 'sr-t3-15'] },
+
+  // ── EDUCATION & SOCIAL SCIENCES (18 JOBS) ─────────────────────────
+  { id: 'j-es-01', title: 'Classroom Assistant', description: 'Maintain target sync history.', requiredSkillIds: ['es-t1-06', 'es-t1-10', 'es-t1-01'] },
+  { id: 'j-es-02', title: 'Junior Data Logger', description: 'Log population data parameters.', requiredSkillIds: ['es-t1-04', 'es-t1-08', 'es-t1-11'] },
+  { id: 'j-es-03', title: 'Training Presenter', description: 'Present clean informational blocks.', requiredSkillIds: ['es-t1-03', 'es-t1-05', 'es-t1-07'] },
+  { id: 'j-es-04', title: 'Instructional Designer', description: 'Build functional lesson units.', requiredSkillIds: ['es-t1-05', 'es-t2-01', 'es-t2-07'] },
+  { id: 'j-es-05', title: 'Community Organizer', description: 'Coordinate localized development approvals.', requiredSkillIds: ['es-t1-09', 'es-t2-02', 'es-t2-15'] },
+  { id: 'j-es-06', title: 'Educational Evaluator', description: 'Author tracking grading rubrics.', requiredSkillIds: ['es-t1-08', 'es-t2-03', 'es-t2-18'] },
+  { id: 'j-es-07', title: 'Guidance Counselor', description: 'Conduct structural adjustment dialogs.', requiredSkillIds: ['es-t1-12', 'es-t2-04', 'es-t2-09'] },
+  { id: 'j-es-08', title: 'LMS Administrator', description: 'Configure online class interfaces.', requiredSkillIds: ['es-t1-06', 'es-t2-05', 'es-t2-14'] },
+  { id: 'j-es-09', title: 'Social Field Researcher', description: 'Apply structural coding categories.', requiredSkillIds: ['es-t1-04', 'es-t2-06', 'es-t2-10'] },
+  { id: 'j-es-10', title: 'Family Caseworker', description: 'Manage home visitation timelines.', requiredSkillIds: ['es-t1-11', 'es-t2-11', 'es-t2-17'] },
+  { id: 'j-es-11', title: 'Welfare Policy Analyst', description: 'Evaluate legislative structural layouts.', requiredSkillIds: ['es-t2-02', 'es-t3-01', 'es-t2-06'] },
+  { id: 'j-es-12', title: 'Academic Principal', description: 'Govern operational staff allocations.', requiredSkillIds: ['es-t2-13', 'es-t3-02', 'es-t2-04'] },
+  { id: 'j-es-13', title: 'Distance Learning Director', description: 'Architect country wide training grids.', requiredSkillIds: ['es-t2-05', 'es-t3-03', 'es-t3-10'] },
+  { id: 'j-es-14', title: 'NGO Managing Director', description: 'Govern transnational programmatic funding.', requiredSkillIds: ['es-t2-02', 'es-t3-04', 'es-t3-09'] },
+  { id: 'j-es-15', title: 'Program Evaluation Lead', description: 'Deploy large tracking arrays.', requiredSkillIds: ['es-t2-18', 'es-t3-05', 'es-t2-10'] },
+  { id: 'j-es-16', title: 'Curriculum Strategy Chief', description: 'Author novel cognitive transfers.', requiredSkillIds: ['es-t2-01', 'es-t3-06', 'es-t3-08'] },
+  { id: 'j-es-17', title: 'Clinical Services Supervisor', description: 'Direct network therapeutic paths.', requiredSkillIds: ['es-t2-04', 'es-t3-07', 'es-t2-12'] },
+  { id: 'j-es-18', title: 'Human Rights Director', description: 'Govern global tracking boundaries.', requiredSkillIds: ['es-t2-06', 'es-t3-15', 'es-t3-12'] }
+];
 
 export function arePrerequisitesMet(skill: Skill, allSkills: Skill[]): boolean {
   if (!skill.prerequisiteIds?.length) return true;
@@ -38,186 +522,3 @@ export function getUnmetPrerequisites(skill: Skill, allSkills: Skill[]): Skill[]
     .map(id => allSkills.find(s => s.id === id))
     .filter((s): s is Skill => !!s && s.status !== 'verified');
 }
-
-export const SKILLS: Skill[] = [
-// ── Universal Foundation ─────────────────────────────────────────
-{ id: 'u-business-comms', name: 'Business Communication', category: 'Universal', description: 'Write professional emails, reports, and documents clearly in English for workplace contexts', status: 'locked', level: 1, skillLevel: 0 },
-{ id: 'u-digital-literacy', name: 'Digital Literacy', category: 'Universal', description: 'Navigate digital tools, platforms, and basic cybersecurity practices confidently', status: 'locked', level: 1, skillLevel: 0 },
-{ id: 'u-data-interpretation', name: 'Data Interpretation', category: 'Universal', description: 'Read charts, tables, and basic statistics to support data-informed decisions', status: 'locked', level: 2, skillLevel: 0 },
-{ id: 'u-project-basics', name: 'Project Basics', category: 'Universal', description: 'Understand timelines, deliverables, scope, and stakeholder roles in any project', status: 'locked', level: 2, skillLevel: 0 },
-{ id: 'u-problem-solving', name: 'Problem Solving Frameworks', category: 'Universal', description: 'Apply structured approaches like root cause analysis, SWOT, and 5 Whys to workplace problems', status: 'locked', level: 2, skillLevel: 0 },
-{ id: 'u-collaboration', name: 'Workplace Collaboration', category: 'Universal', description: 'Work effectively in teams, resolve conflict, and give and receive constructive feedback', status: 'locked', level: 2, skillLevel: 0 },
-{ id: 'u-financial-awareness', name: 'Financial Awareness', category: 'Universal', description: 'Read a basic P&L, understand budgets, and apply personal and business finance fundamentals', status: 'locked', level: 3, skillLevel: 0 },
-{ id: 'u-ethics', name: 'Ethics & Professional Conduct', category: 'Universal', description: 'Apply workplace ethics, data privacy principles, and professional standards in SEA contexts', status: 'locked', level: 3, skillLevel: 0 },
-
-  // ── Engineering and Tech ──────────────────────────────────────────
-  { id: 'et-programming', name: 'Programming Fundamentals', category: 'Engineering and Tech', description: 'Write clean, structured code in at least one language used across SEA product teams', status: 'verified', level: 1, skillLevel: 3 },
-  { id: 'et-data-structures', name: 'Data Structures & Algorithms', category: 'Engineering and Tech', description: 'Design efficient solutions for real-world engineering problems at scale', status: 'evidenced', level: 1, skillLevel: 2 },
-  { id: 'et-systems-design', name: 'Systems Design', category: 'Engineering and Tech', description: 'Architect scalable back-end systems for high-traffic regional platforms', status: 'self-declared', level: 2, skillLevel: 1, prerequisiteIds: ['et-programming', 'et-data-structures'] },
-  { id: 'et-cloud', name: 'Cloud Infrastructure', category: 'Engineering and Tech', description: 'Deploy and manage workloads on AWS, GCP, or Azure across SEA regions', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['et-programming', 'et-data-structures'] },
-  { id: 'et-devops', name: 'DevOps & CI/CD', category: 'Engineering and Tech', description: 'Build automated pipelines for fast, reliable software delivery', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['et-systems-design', 'et-cloud'] },
-  { id: 'et-security', name: 'Cybersecurity Fundamentals', category: 'Engineering and Tech', description: 'Protect systems and data against threats common in SEA digital infrastructure', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['et-cloud', 'et-systems-design'] },
-
-  // ── Business and Finance ─────────────────────────────────────────
-  { id: 'bf-accounting', name: 'Accounting Principles', category: 'Business and Finance', description: 'Apply double-entry bookkeeping and financial reporting standards across ASEAN entities', status: 'verified', level: 1, skillLevel: 3 },
-  { id: 'bf-business-comms', name: 'Business Communication', category: 'Business and Finance', description: 'Write and present clearly in English for regional stakeholders and clients', status: 'evidenced', level: 1, skillLevel: 2 },
-  { id: 'bf-financial-analysis', name: 'Financial Analysis', category: 'Business and Finance', description: 'Interpret P&L, balance sheets, and cash flows for SEA business decisions', status: 'self-declared', level: 2, skillLevel: 1, prerequisiteIds: ['bf-accounting', 'bf-business-comms'] },
-  { id: 'bf-corporate-law', name: 'Corporate Law Basics', category: 'Business and Finance', description: 'Navigate company registration, contracts, and compliance across ASEAN jurisdictions', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['bf-accounting', 'bf-business-comms'] },
-  { id: 'bf-investment', name: 'Investment & Valuation', category: 'Business and Finance', description: 'Value companies and assets for M&A, fundraising, and capital markets in SEA', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['bf-financial-analysis', 'bf-corporate-law'] },
-  { id: 'bf-strategy', name: 'Business Strategy', category: 'Business and Finance', description: 'Develop market entry and growth strategies for competitive ASEAN markets', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['bf-financial-analysis', 'bf-corporate-law'] },
-
-  // ── Medicine and Health ──────────────────────────────────────────
-  { id: 'mh-anatomy', name: 'Human Anatomy & Physiology', category: 'Medicine and Health', description: 'Understand body systems as the foundation for clinical and health-tech roles', status: 'verified', level: 1, skillLevel: 3 },
-  { id: 'mh-clinical-skills', name: 'Clinical Assessment Skills', category: 'Medicine and Health', description: 'Conduct patient history taking and physical examinations in clinical settings', status: 'evidenced', level: 1, skillLevel: 2 },
-  { id: 'mh-pharmacology', name: 'Pharmacology', category: 'Medicine and Health', description: 'Apply drug mechanisms and dosing safely within regional formularies', status: 'self-declared', level: 2, skillLevel: 1, prerequisiteIds: ['mh-anatomy', 'mh-clinical-skills'] },
-  { id: 'mh-public-health', name: 'Public Health & Epidemiology', category: 'Medicine and Health', description: 'Analyse disease patterns and design interventions for SEA populations', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['mh-anatomy', 'mh-clinical-skills'] },
-  { id: 'mh-health-informatics', name: 'Health Informatics', category: 'Medicine and Health', description: 'Manage clinical data systems and EMR platforms in digitising health systems', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['mh-pharmacology', 'mh-public-health'] },
-  { id: 'mh-research', name: 'Clinical Research & Trials', category: 'Medicine and Health', description: 'Design and conduct studies under GCP standards for SEA health research bodies', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['mh-public-health', 'mh-pharmacology'] },
-
-  // ── Creative and Design ──────────────────────────────────────────
-  { id: 'cd-visual-design', name: 'Visual Design Principles', category: 'Creative and Design', description: 'Apply colour, typography, and layout for digital and print media across SEA markets', status: 'verified', level: 1, skillLevel: 3 },
-  { id: 'cd-storytelling', name: 'Creative Storytelling', category: 'Creative and Design', description: 'Craft narratives that resonate with diverse ASEAN cultural audiences', status: 'evidenced', level: 1, skillLevel: 2 },
-  { id: 'cd-ux', name: 'UX Research & Design', category: 'Creative and Design', description: 'Design user-centred products for mobile-first and multilingual SEA users', status: 'self-declared', level: 2, skillLevel: 1, prerequisiteIds: ['cd-visual-design', 'cd-storytelling'] },
-  { id: 'cd-content', name: 'Content Strategy', category: 'Creative and Design', description: 'Plan and govern content across brand, product, and regional campaign touchpoints', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['cd-visual-design', 'cd-storytelling'] },
-  { id: 'cd-brand', name: 'Brand Identity & Strategy', category: 'Creative and Design', description: 'Build consistent brand systems for companies expanding across ASEAN', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['cd-ux', 'cd-content'] },
-  { id: 'cd-motion', name: 'Motion & Digital Media', category: 'Creative and Design', description: 'Produce video, animation, and interactive content for social and product surfaces', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['cd-content', 'cd-visual-design'] },
-
-  // ── Sciences and Research ────────────────────────────────────────
-  { id: 'sr-research-methods', name: 'Research Methodology', category: 'Sciences and Research', description: 'Design rigorous studies and experiments for academic and industry research', status: 'verified', level: 1, skillLevel: 3 },
-  { id: 'sr-statistics', name: 'Statistics & Data Analysis', category: 'Sciences and Research', description: 'Apply statistical methods to extract insights from complex datasets', status: 'evidenced', level: 1, skillLevel: 2 },
-  { id: 'sr-lab-skills', name: 'Laboratory Techniques', category: 'Sciences and Research', description: 'Conduct experiments safely and accurately in life science and chemistry labs', status: 'self-declared', level: 2, skillLevel: 1, prerequisiteIds: ['sr-research-methods', 'sr-statistics'] },
-  { id: 'sr-data-science', name: 'Data Science & Modelling', category: 'Sciences and Research', description: 'Build predictive models for biotech, agri-tech, and environmental applications in SEA', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['sr-statistics', 'sr-research-methods'] },
-  { id: 'sr-bioinformatics', name: 'Bioinformatics', category: 'Sciences and Research', description: 'Analyse genomic and biological data for health and agricultural research', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['sr-lab-skills', 'sr-data-science'] },
-  { id: 'sr-environmental', name: 'Environmental Science & Policy', category: 'Sciences and Research', description: 'Assess environmental impact and advise on sustainability policy across ASEAN', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['sr-data-science', 'sr-lab-skills'] },
-
-  // ── Education and Social Sciences ────────────────────────────────
-  { id: 'es-communication', name: 'Interpersonal Communication', category: 'Education and Social Sciences', description: 'Build rapport and communicate effectively across diverse SEA communities', status: 'verified', level: 1, skillLevel: 3 },
-  { id: 'es-psychology', name: 'Psychology & Human Behaviour', category: 'Education and Social Sciences', description: 'Apply behavioural principles to education, counselling, and social work', status: 'evidenced', level: 1, skillLevel: 2 },
-  { id: 'es-curriculum', name: 'Curriculum & Instructional Design', category: 'Education and Social Sciences', description: 'Design learning programmes aligned with national frameworks and employer needs', status: 'self-declared', level: 2, skillLevel: 1, prerequisiteIds: ['es-communication', 'es-psychology'] },
-  { id: 'es-community', name: 'Community Development', category: 'Education and Social Sciences', description: 'Plan and implement social programmes for underserved communities across SEA', status: 'locked', level: 2, skillLevel: 0, prerequisiteIds: ['es-communication', 'es-psychology'] },
-  { id: 'es-policy', name: 'Social Policy & Research', category: 'Education and Social Sciences', description: 'Analyse and advise on public policy affecting education, welfare, and justice', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['es-curriculum', 'es-community'] },
-  { id: 'es-leadership', name: 'Organisational Leadership', category: 'Education and Social Sciences', description: 'Lead teams and institutions through change in public and non-profit sectors', status: 'locked', level: 3, skillLevel: 0, prerequisiteIds: ['es-community', 'es-curriculum'] },
-];
-
-export const JOBS: Job[] = [
-
-  // Engineering and Tech
-  {
-    id: 'job-software-engineer',
-    title: 'Software Engineer',
-    description: 'Build and maintain scalable software products for regional startups and enterprises',
-    requiredSkillIds: ['et-programming', 'et-data-structures', 'et-systems-design', 'et-cloud'],
-  },
-  {
-    id: 'job-devops-engineer',
-    title: 'DevOps Engineer',
-    description: 'Automate infrastructure and delivery pipelines for fast-moving product teams',
-    requiredSkillIds: ['et-cloud', 'et-systems-design', 'et-devops', 'et-security'],
-  },
-  {
-    id: 'job-cybersecurity-analyst',
-    title: 'Cybersecurity Analyst',
-    description: 'Protect digital assets and respond to threats across regional enterprise networks',
-    requiredSkillIds: ['et-programming', 'et-cloud', 'et-security', 'et-systems-design'],
-  },
-
-  // Business and Finance
-  {
-    id: 'job-financial-analyst',
-    title: 'Financial Analyst',
-    description: 'Model financial performance and support investment decisions for regional entities',
-    requiredSkillIds: ['bf-accounting', 'bf-financial-analysis', 'bf-investment', 'bf-business-comms'],
-  },
-  {
-    id: 'job-corporate-lawyer',
-    title: 'Corporate Lawyer',
-    description: 'Advise on transactions, contracts, and regulatory matters across ASEAN jurisdictions',
-    requiredSkillIds: ['bf-corporate-law', 'bf-business-comms', 'bf-strategy', 'bf-financial-analysis'],
-  },
-  {
-    id: 'job-strategy-consultant',
-    title: 'Strategy Consultant',
-    description: 'Help regional businesses solve complex problems and capture growth opportunities',
-    requiredSkillIds: ['bf-strategy', 'bf-financial-analysis', 'bf-business-comms', 'bf-investment'],
-  },
-
-  // Medicine and Health
-  {
-    id: 'job-clinical-officer',
-    title: 'Clinical Officer',
-    description: 'Deliver patient care and clinical services in hospitals and community health settings',
-    requiredSkillIds: ['mh-anatomy', 'mh-clinical-skills', 'mh-pharmacology', 'mh-public-health'],
-  },
-  {
-    id: 'job-health-informatics',
-    title: 'Health Informatics Specialist',
-    description: 'Implement and manage digital health systems for hospitals and MOH agencies',
-    requiredSkillIds: ['mh-clinical-skills', 'mh-health-informatics', 'mh-public-health', 'mh-anatomy'],
-  },
-  {
-    id: 'job-clinical-researcher',
-    title: 'Clinical Research Associate',
-    description: 'Support and monitor clinical trials for pharmaceutical and biotech firms in SEA',
-    requiredSkillIds: ['mh-research', 'mh-pharmacology', 'mh-public-health', 'mh-clinical-skills'],
-  },
-
-  // Creative and Design
-  {
-    id: 'job-ux-designer',
-    title: 'UX Designer',
-    description: 'Design intuitive digital experiences for diverse users across ASEAN markets',
-    requiredSkillIds: ['cd-visual-design', 'cd-ux', 'cd-storytelling', 'cd-content'],
-  },
-  {
-    id: 'job-brand-strategist',
-    title: 'Brand Strategist',
-    description: 'Build and evolve brand identities for companies scaling across Southeast Asia',
-    requiredSkillIds: ['cd-brand', 'cd-storytelling', 'cd-content', 'cd-visual-design'],
-  },
-  {
-    id: 'job-content-producer',
-    title: 'Content Producer',
-    description: 'Create and distribute multimedia content across digital platforms in SEA',
-    requiredSkillIds: ['cd-motion', 'cd-content', 'cd-storytelling', 'cd-visual-design'],
-  },
-
-  // Sciences and Research
-  {
-    id: 'job-data-scientist',
-    title: 'Data Scientist',
-    description: 'Build models and derive insights from complex datasets for regional product teams',
-    requiredSkillIds: ['sr-statistics', 'sr-data-science', 'sr-research-methods', 'sr-bioinformatics'],
-  },
-  {
-    id: 'job-research-scientist',
-    title: 'Research Scientist',
-    description: 'Conduct applied research in life sciences, agri-tech, or environmental sectors',
-    requiredSkillIds: ['sr-lab-skills', 'sr-research-methods', 'sr-bioinformatics', 'sr-statistics'],
-  },
-  {
-    id: 'job-environmental-consultant',
-    title: 'Environmental Consultant',
-    description: 'Advise on sustainability, EIA, and environmental compliance across ASEAN projects',
-    requiredSkillIds: ['sr-environmental', 'sr-data-science', 'sr-research-methods', 'sr-statistics'],
-  },
-
-  // Education and Social Sciences
-  {
-    id: 'job-educator',
-    title: 'Educator & Trainer',
-    description: 'Design and deliver learning programmes for schools, corporates, and communities',
-    requiredSkillIds: ['es-curriculum', 'es-communication', 'es-psychology', 'es-leadership'],
-  },
-  {
-    id: 'job-social-worker',
-    title: 'Social Worker',
-    description: 'Support vulnerable individuals and families through casework and community programmes',
-    requiredSkillIds: ['es-community', 'es-psychology', 'es-communication', 'es-policy'],
-  },
-  {
-    id: 'job-policy-analyst',
-    title: 'Policy Analyst',
-    description: 'Research and advise on social, education, and public policy for government agencies',
-    requiredSkillIds: ['es-policy', 'es-leadership', 'es-community', 'es-communication'],
-  },
-];

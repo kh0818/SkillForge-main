@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { X, Swords, Trophy, Skull, Loader2 } from 'lucide-react';
 import type { Skill } from '../data/mockData';
-import { generateSkillQuiz, type QuizQuestion } from '../services/gemini';
+import { generateSkillQuiz, QuizQuestion } from '../services/gemini';
 
 const PASS_THRESHOLD = 4;
 const TOTAL_QUESTIONS = 5;
@@ -29,9 +29,10 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
   const [error, setError] = useState<string | null>(null);
   const [loadKey, setLoadKey] = useState(0);
 
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const accent = categoryAccent[skill.category] ?? '#d97706';
 
-  const loadQuiz = useCallback(async () => {
+  const loadQuiz = useCallback(async (targetSkill: Skill) => {
     setPhase('loading');
     setQuestions([]);
     setCurrentIndex(0);
@@ -40,18 +41,21 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
     setError(null);
 
     try {
-      const quiz = await generateSkillQuiz(skill);
+      const quiz = await generateSkillQuiz(targetSkill);
       setQuestions(quiz);
       setPhase('quiz');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load quiz');
-      setPhase('loading');
     }
-  }, [skill]);
+  }, []);
 
   useEffect(() => {
-    loadQuiz();
-  }, [loadQuiz, loadKey]);
+    loadQuiz(skill);
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [skill.id, loadKey, loadQuiz]);
 
   const handleAnswer = (optionIndex: number) => {
     if (selectedIndex !== null || phase !== 'quiz') return;
@@ -64,7 +68,7 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
 
     const isLast = currentIndex === TOTAL_QUESTIONS - 1;
 
-    setTimeout(() => {
+    timerRef.current = setTimeout(() => {
       if (isLast) {
         if (newScore >= PASS_THRESHOLD) {
           setPhase('victory');
@@ -99,7 +103,6 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Ornate top bar */}
         <div
           className="flex items-center justify-between px-5 py-3 border-b border-amber-900/50"
           style={{ background: 'linear-gradient(90deg, #2a1f14 0%, #1a1410 50%, #2a1f14 100%)' }}
@@ -126,7 +129,7 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
           </p>
           <h2 className="text-xl font-bold text-amber-50 mb-1">{skill.name}</h2>
           <p className="text-sm text-amber-600/70 mb-4 leading-snug">
-            {skill.description}
+            {typeof skill.description === 'string' ? skill.description : JSON.stringify(skill.description)}
           </p>
 
           {phase === 'loading' && (
@@ -177,7 +180,7 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
               </p>
 
               <div className="grid gap-2.5">
-                {currentQuestion.options.map((opt, i) => {
+                {currentQuestion.options.map((opt: string, i: number) => {
                   let btnClass =
                     'w-full text-left px-4 py-3 rounded-xl border-2 text-sm font-medium transition-all duration-200 ';
                   if (selectedIndex === null) {
@@ -252,7 +255,6 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
           )}
         </div>
 
-        {/* Bottom flourish */}
         <div className="h-1 bg-gradient-to-r from-transparent via-amber-700/40 to-transparent" />
       </div>
     </div>

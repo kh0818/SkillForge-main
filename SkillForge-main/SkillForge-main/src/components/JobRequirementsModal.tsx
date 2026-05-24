@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { X, Briefcase, Loader2, Lock } from 'lucide-react';
 import type { Job, Skill } from '../data/mockData';
-import { generateSkillRelevanceForJob } from '../services/gemini';
+import { generateBatchSkillRelevance } from '../services/gemini';
 
 interface MissingSkillEntry {
   skill: Skill;
@@ -35,35 +35,41 @@ export default function JobRequirementsModal({ job, skills, onClose }: JobRequir
     [job.requiredSkillIds, skills],
   );
 
-  const missingSkillKey = missingSkills.map((s) => s.id).join(',');
+  const missingSkillKey = useMemo(() => missingSkills.map((s) => s.id).join(','), [missingSkills]);
 
-  const loadRelevance = useCallback(async () => {
+  const loadRelevance = useCallback(async (targetSkills: Skill[]) => {
     setLoading(true);
     setEntries([]);
     setError(null);
 
     try {
-      const results = await Promise.all(
-        missingSkills.map(async (skill) => {
-          const relevance = await generateSkillRelevanceForJob(job, skill);
-          return { skill, relevance };
-        }),
-      );
-      setEntries(results);
+      const skillNames = targetSkills.map((s) => s.name);
+      
+      const results = await generateBatchSkillRelevance(job.title, skillNames);
+      
+      const mappedEntries = targetSkills.map((skill) => {
+        const match = results.find((r) => r.skillName === skill.name);
+        return { 
+          skill, 
+          relevance: match ? match.relevance : 'Relevance context unavailable.' 
+        };
+      });
+
+      setEntries(mappedEntries);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load skill insights');
     } finally {
       setLoading(false);
     }
-  }, [job, missingSkills]);
+  }, [job.title]);
 
   useEffect(() => {
     if (missingSkills.length === 0) {
       setLoading(false);
       return;
     }
-    loadRelevance();
-  }, [loadRelevance, missingSkillKey, missingSkills.length]);
+    loadRelevance(missingSkills);
+  }, [missingSkillKey, loadRelevance]);
 
   return (
     <div
@@ -118,7 +124,7 @@ export default function JobRequirementsModal({ job, skills, onClose }: JobRequir
               <p className="text-red-400 text-sm mb-4">{error}</p>
               <button
                 type="button"
-                onClick={loadRelevance}
+                onClick={() => loadRelevance(missingSkills)}
                 className="px-5 py-2 rounded-lg border border-cyan-700/60 text-cyan-200 text-sm font-semibold hover:bg-cyan-950/60 transition-colors"
               >
                 Try Again

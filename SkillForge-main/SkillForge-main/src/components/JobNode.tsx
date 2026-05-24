@@ -9,7 +9,7 @@ interface JobNodeData {
 }
 
 function JobNode({ data }: NodeProps) {
-  const { job, skills } = data as JobNodeData;
+  const { job, skills } = data as unknown as JobNodeData;
 
   const requiredSkills = job.requiredSkillIds.map(
     id => skills.find(s => s.id === id)
