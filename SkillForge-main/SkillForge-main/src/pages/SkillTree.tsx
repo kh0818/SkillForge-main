@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Globe, Shield, Briefcase, Award, Users, User } from 'lucide-react';
 import {
   ReactFlow,
@@ -6,8 +6,8 @@ import {
   Controls,
   type Node,
   type Edge,
-  type NodeProps,
   type Viewport,
+  type ReactFlowInstance,
   BackgroundVariant,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
@@ -22,133 +22,38 @@ import {
 } from '../data/mockData';
 import SkillNode from '../components/SkillNode';
 import JobNode from '../components/JobNode';
+import FieldPlanetNode from '../components/FieldPlanetNode';
+import GalaxyBackgroundNode from '../components/GalaxyBackgroundNode';
 import SkillQuizModal from '../components/SkillQuizModal';
 import JobRequirementsModal from '../components/JobRequirementsModal';
-import OnboardingModal from '../components/OnboardingModal';
 import ProfilePage from '../components/ProfilePage';
-
-function CategoryLabelNode({ data }: NodeProps) {
-  const { label, color } = data as { label: string; color: string };
-  return (
-    <div
-      className="px-6 py-2 rounded-full text-lg -translate-x-1/2 -translate-y-1/2 text-center font-black uppercase tracking-widest border backdrop-blur-md animate-pulse whitespace-nowrap"
-      style={{
-        color,
-        borderColor: `${color}66`,
-        background: `${color}0a`,
-        boxShadow: `0 0 25px ${color}1b`,
-      }}
-    >
-      {label}
-    </div>
-  );
-}
-
-function ConstellationBackgroundNode() {
-  const radii = [450, 750, 1050]; 
-  const ringLabels = ['Core Foundation', 'Advanced Applied', 'Mastery Matrix'];
-
-  return (
-    <div className="pointer-events-none select-none" style={{ transform: 'translate(-50%, -50%)' }}>
-      <svg width="3200" height="3200" className="opacity-60">
-        <defs>
-          <radialGradient id="core-glow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.12" />
-            <stop offset="40%" stopColor="#1e1b4b" stopOpacity="0.04" />
-            <stop offset="100%" stopColor="#030712" stopOpacity="0" />
-          </radialGradient>
-        </defs>
-        
-        <circle cx="1600" cy="1600" r="900" fill="url(#core-glow)" />
-        
-        {radii.map((r, i) => (
-          <g key={i}>
-            <circle
-              cx="1600"
-              cy="1600"
-              r={r}
-              fill="none"
-              stroke="#22d3ee"
-              strokeWidth="1.5"
-              strokeDasharray="6 6"
-              className="opacity-25"
-            />
-            <circle
-              cx="1600"
-              cy="1600"
-              r={r + 4}
-              fill="none"
-              stroke="#1f2937"
-              strokeWidth="1"
-              className="opacity-40"
-            />
-            <text
-              x="1600"
-              y={1600 - r - 12}
-              textAnchor="middle"
-              fill="#67e8f9"
-              className="text-[10px] font-mono tracking-[0.2em] font-bold opacity-30 uppercase"
-            >
-              {ringLabels[i]}
-            </text>
-          </g>
-        ))}
-
-        {[...Array(12)].map((_, i) => {
-          const angle = (i * 30 * Math.PI) / 180;
-          const x2 = 1600 + 1200 * Math.cos(angle);
-          const y2 = 1600 + 1200 * Math.sin(angle);
-          return (
-            <line
-              key={i}
-              x1="1600"
-              y1="1600"
-              x2={x2}
-              y2={y2}
-              stroke="#111827"
-              strokeWidth="1"
-              strokeDasharray="2 8"
-              className="opacity-50"
-            />
-          );
-        })}
-      </svg>
-    </div>
-  );
-}
+import {
+  DEFAULT_FIELD_ZOOM,
+  DEFAULT_GALAXY_ZOOM,
+  FIELD_CATEGORIES,
+  FIELD_THEMES,
+  GALAXY_CENTER,
+  getFieldPlanetPosition,
+  getJobPosition,
+  getScopeCenter,
+  getSkillPosition,
+  isJobInScope,
+  type MapScope,
+} from '../utils/galaxyLayout';
 
 const nodeTypes = {
   skillNode: SkillNode,
   jobNode: JobNode,
-  categoryLabelNode: CategoryLabelNode,
-  constellationBackground: ConstellationBackgroundNode,
+  fieldPlanetNode: FieldPlanetNode,
+  galaxyBackground: GalaxyBackgroundNode,
 };
 
-const LAYOUT_CENTER = { x: 1500, y: 1500 };
-
-const CATEGORY_ORDER: SkillCategory[] = [
-  'Engineering and Tech',
-  'Business and Finance',
-  'Medicine and Health',
-  'Creative and Design',
-  'Sciences and Research',
-  'Education and Social Sciences',
-];
-
-const JOB_RING_RADIUS = 1500;
-const SKILL_NODE_WIDTH = 148;
-const JOB_NODE_WIDTH = 208;
-
-const SKILL_NODE_OFFSET = { x: SKILL_NODE_WIDTH / 2, y: 55 };
-const JOB_NODE_OFFSET = { x: JOB_NODE_WIDTH / 2, y: 70 };
-const DEFAULT_ZOOM = 0.35;
-
 function createCenteredViewport(
-  center: { x: number; y: number } = LAYOUT_CENTER,
-  zoom: number = DEFAULT_ZOOM,
+  center = GALAXY_CENTER,
+  zoom: number = DEFAULT_GALAXY_ZOOM,
 ): Viewport {
-  const w = typeof window !== 'undefined' ? window.innerWidth : 1440;
-  const h = typeof window !== 'undefined' ? window.innerHeight : 900;
+  const w = typeof window !== 'undefined' ? Math.max(960, window.innerWidth - 224) : 1440;
+  const h = typeof window !== 'undefined' ? Math.max(620, window.innerHeight - 122) : 900;
   return {
     x: w / 2 - center.x * zoom,
     y: h / 2 - center.y * zoom,
@@ -158,119 +63,42 @@ function createCenteredViewport(
 
 const DEFAULT_VIEWPORT = createCenteredViewport();
 
-const CATEGORY_FILTER_COLORS: Record<SkillCategory, string> = {
-  'Universal': '#22d3ee',
-  'Engineering and Tech': '#3b82f6',
-  'Business and Finance': '#f59e0b',
-  'Medicine and Health': '#22c55e',
-  'Creative and Design': '#a855f7',
-  'Sciences and Research': '#06b6d4',
-  'Education and Social Sciences': '#f97316',
-};
-
 const DIM_OPACITY = 0.2;
-
-function polarToXY(cx: number, cy: number, radius: number, angleRad: number) {
-  return {
-    x: cx + radius * Math.cos(angleRad),
-    y: cy + radius * Math.sin(angleRad),
-  };
-}
-
-function nodePositionFromCenter(
-  center: { x: number; y: number },
-  offset: { x: number; y: number },
-) {
-  return { x: center.x - offset.x, y: center.y - offset.y };
-}
-
-function getCategoryLabelPosition(): { x: number; y: number } {
-  return { 
-    x: LAYOUT_CENTER.x, 
-    y: LAYOUT_CENTER.y 
-  };
-}
-
-function getSkillPosition(skill: Skill, allSkills: Skill[]): { x: number; y: number } {
-  const categorySkills = allSkills.filter(s => s.category === skill.category);
-  
-  const levelPeers = categorySkills
-    .filter(s => s.level === skill.level)
-    .sort((a, b) => a.id.localeCompare(b.id));
-  
-  const levelIndex = levelPeers.findIndex(s => s.id === skill.id);
-  const levelCount = levelPeers.length;
-
-  let radius = 350;
-  
-  if (skill.category === 'Universal') {
-    switch (skill.level) {
-      case 1: radius = 380; break;
-      case 2: radius = 600; break;
-      case 3: radius = 820; break;
-      default: radius = 380;
-    }
-  } else {
-    switch (skill.level) {
-      case 1: radius = 450; break; 
-      case 2: radius = 750; break; 
-      case 3: radius = 1050; break;
-      default: radius = 750;
-    }
-  }
-
-  const baseAngle = levelCount > 0 ? (levelIndex / levelCount) * 2 * Math.PI : 0;
-  const stagger = (skill.level % 2 === 0 && levelCount > 1) ? (Math.PI / levelCount) : 0;
-  const angle = baseAngle + stagger - Math.PI / 2;
-
-  const center = polarToXY(LAYOUT_CENTER.x, LAYOUT_CENTER.y, radius, angle);
-  return nodePositionFromCenter(center, SKILL_NODE_OFFSET);
-}
-
-function getJobPosition(jobId: string, visibleJobs: Job[]): { x: number; y: number } {
-  const index = visibleJobs.findIndex(j => j.id === jobId);
-  const total = visibleJobs.length || 1;
-  const angle = (2 * Math.PI * (index + 0.5)) / total - Math.PI / 2;
-  const center = polarToXY(LAYOUT_CENTER.x, LAYOUT_CENTER.y, JOB_RING_RADIUS, angle);
-  return nodePositionFromCenter(center, JOB_NODE_OFFSET);
-}
 
 const acquiredStatuses = new Set(['self-declared', 'evidenced', 'verified']);
 
 function buildEdges(
   skills: Skill[],
   activeJobId: string | null,
-  categoryFilter: SkillCategory | null,
+  activeSkillId: string | null,
+  scope: MapScope,
 ): Edge[] {
   const edges: Edge[] = [];
-  const byCategory: Record<string, Skill[]> = {};
-  for (const s of skills) {
-    (byCategory[s.category] ??= []).push(s);
-  }
+  const activeSkill = activeSkillId ? skills.find((skill) => skill.id === activeSkillId) : undefined;
+  const activePrerequisiteIds = new Set(activeSkill?.prerequisiteIds ?? []);
 
-  const categoriesToRender = categoryFilter ? [categoryFilter] : Object.keys(byCategory);
-
-  for (const category of categoriesToRender) {
-    const catSkills = byCategory[category];
-    if (!catSkills) continue;
-    const sorted = [...catSkills].sort((a, b) => a.level - b.level);
-    for (let i = 0; i < sorted.length - 1; i++) {
-      const src = sorted[i];
-      const tgt = sorted[i + 1];
-      const active = acquiredStatuses.has(src.status);
+  skills.forEach((target) => {
+    if (scope !== 'Galaxy' && target.category !== scope) return;
+    target.prerequisiteIds?.forEach((sourceId) => {
+      const source = skills.find((skill) => skill.id === sourceId);
+      if (!source) return;
+      if (scope !== 'Galaxy' && source.category !== scope) return;
+      const active = acquiredStatuses.has(source.status);
+      const highlighted = activeSkillId === target.id || activePrerequisiteIds.has(source.id);
       edges.push({
-        id: `e-${src.id}-${tgt.id}`,
-        source: src.id,
-        target: tgt.id,
-        animated: active,
+        id: `e-${source.id}-${target.id}`,
+        source: source.id,
+        target: target.id,
+        animated: active || highlighted,
+        type: 'smoothstep',
         style: {
-          stroke: active ? '#22c55e' : '#374151',
-          strokeWidth: active ? 2 : 1,
-          opacity: active ? 0.8 : 0.4,
+          stroke: highlighted ? '#facc15' : active ? '#22c55e' : '#334155',
+          strokeWidth: highlighted ? 2.6 : active ? 1.8 : 1,
+          opacity: highlighted ? 0.95 : active ? 0.55 : 0.24,
         },
       });
-    }
-  }
+    });
+  });
 
   if (activeJobId) {
     const job = JOBS.find(j => j.id === activeJobId);
@@ -278,16 +106,17 @@ function buildEdges(
       job.requiredSkillIds.forEach(skillId => {
         const skill = skills.find(s => s.id === skillId);
         if (!skill) return;
-        if (categoryFilter && skill.category !== categoryFilter) return;
+        if (scope !== 'Galaxy' && skill.category !== scope) return;
         const active = acquiredStatuses.has(skill.status);
         edges.push({
           id: `e-${skillId}-${job.id}`,
           source: skillId,
           target: job.id,
           animated: active,
+          type: 'smoothstep',
           style: {
             stroke: active ? '#22d3ee' : '#67e8f9',
-            strokeWidth: active ? 2 : 1.5,
+            strokeWidth: active ? 2.3 : 1.4,
             strokeDasharray: active ? undefined : '4 4',
             opacity: active ? 0.9 : 0.65,
           },
@@ -299,40 +128,19 @@ function buildEdges(
   return edges;
 }
 
-function getCategoryFilterHighlight(
-  category: SkillCategory,
-  skills: Skill[],
-): { skillIds: Set<string>; jobIds: Set<string> } {
-  const skillIds = new Set(skills.filter(s => s.category === category).map(s => s.id));
-  const jobIds = new Set(
-    JOBS.filter(job =>
-      job.requiredSkillIds.some(id => {
-        const skill = skills.find(s => s.id === id);
-        return skill?.category === category;
-      }),
-    ).map(j => j.id),
-  );
-  return { skillIds, jobIds };
-}
-
 export default function SkillTree() {
+  const flowRef = useRef<ReactFlowInstance | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [skills, setSkills] = useState<Skill[]>(() => [...SKILLS]);
-  const [onboarding, setOnboarding] = useState(true);
   const [quizSkill, setQuizSkill] = useState<Skill | null>(null);
   const [jobModal, setJobModal] = useState<Job | null>(null);
+  const [hoveredSkillId, setHoveredSkillId] = useState<string | null>(null);
   const [hoveredJobId, setHoveredJobId] = useState<string | null>(null);
-  const [categoryFilter] = useState<SkillCategory | null>(null);
   const [viewMode, setViewMode] = useState<'map' | 'profile' | 'employer'>('map');
-  const [activeField, setActiveField] = useState<SkillCategory | 'Universal'>('Universal');
+  const [activeField, setActiveField] = useState<MapScope>('Galaxy');
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const activeJobId = jobModal?.id ?? hoveredJobId;
-
-  const filterHighlight = useMemo(
-    () => (categoryFilter ? getCategoryFilterHighlight(categoryFilter, skills) : null),
-    [categoryFilter, skills],
-  );
+  const activeJobId = jobModal?.id;
 
   const activeJob = useMemo(
     () => (activeJobId ? JOBS.find(j => j.id === activeJobId) : undefined),
@@ -343,6 +151,13 @@ export default function SkillTree() {
     () => (activeJob ? new Set(activeJob.requiredSkillIds) : null),
     [activeJob],
   );
+
+  const relatedSkillIds = useMemo(() => {
+    if (!hoveredSkillId) return null;
+    const skill = skills.find((candidate) => candidate.id === hoveredSkillId);
+    if (!skill) return null;
+    return new Set([skill.id, ...(skill.prerequisiteIds ?? [])]);
+  }, [hoveredSkillId, skills]);
 
   const matchingSuggestions = useMemo(() => {
     if (!searchQuery.trim()) return [];
@@ -372,23 +187,18 @@ export default function SkillTree() {
   }, [searchQuery, skills]);
 
   const nodes = useMemo<Node[]>(() => {
-    const transition = { transition: 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)' };
+    const transition = {};
 
     const visibleSkills = skills.filter(s => 
-      activeField === 'Universal' ? s.category === 'Universal' : s.category === activeField
+      activeField === 'Galaxy' ? true : s.category === activeField
     );
     
-    const visibleJobs = activeField === 'Universal' 
-      ? [] 
-      : JOBS.filter(j => j.requiredSkillIds.some(id => {
-          const skill = skills.find(s => s.id === id);
-          return skill?.category === activeField;
-        }));
+    const visibleJobs = JOBS.filter((job) => isJobInScope(job, activeField, skills));
 
     const bgNode: Node = {
-      id: 'constellation-background-lines',
-      type: 'constellationBackground',
-      position: LAYOUT_CENTER,
+      id: 'galaxy-background',
+      type: 'galaxyBackground',
+      position: GALAXY_CENTER,
       data: {},
       draggable: false,
       selectable: false,
@@ -396,15 +206,41 @@ export default function SkillTree() {
       zIndex: -1,
     };
 
+    const fieldNodes: Node[] = FIELD_CATEGORIES.map((category) => {
+      const theme = FIELD_THEMES[category];
+      const categorySkills = skills.filter((skill) => skill.category === category);
+      const verifiedCount = categorySkills.filter((skill) => skill.status === 'verified').length;
+      const isFocused = activeField === category;
+      return {
+        id: `field-${category}`,
+        type: 'fieldPlanetNode',
+        position: getFieldPlanetPosition(category),
+        data: {
+          category,
+          label: theme.label,
+          color: theme.color,
+          shadow: theme.shadow,
+          skillCount: categorySkills.length,
+          verifiedCount,
+          isFocused,
+          isDimmed: activeField !== 'Galaxy' && !isFocused,
+        },
+        draggable: false,
+        selectable: false,
+        zIndex: 0,
+        style: { opacity: activeField === 'Galaxy' || isFocused ? 1 : 0.38, ...transition },
+      };
+    });
+
     const skillNodes: Node[] = visibleSkills.map(skill => {
       let opacity = 1;
       
       if (searchMatches) {
         opacity = searchMatches.skillIds.has(skill.id) ? 1 : 0.15;
-      } else if (filterHighlight) {
-        opacity = filterHighlight.skillIds.has(skill.id) ? 1 : DIM_OPACITY;
       } else if (requiredSkillIds) {
         opacity = requiredSkillIds.has(skill.id) ? 1 : 0.35;
+      } else if (relatedSkillIds) {
+        opacity = relatedSkillIds.has(skill.id) ? 1 : 0.28;
       }
       
       const prerequisiteBlocked = !arePrerequisitesMet(skill, skills);
@@ -417,8 +253,14 @@ export default function SkillTree() {
         id: skill.id,
         type: 'skillNode',
         position: getSkillPosition(skill, skills),
-        data: { skill, prerequisiteBlocked, unmetPrerequisites },
+        data: {
+          skill,
+          prerequisiteBlocked,
+          unmetPrerequisites,
+          isRequired: Boolean(requiredSkillIds?.has(skill.id) || relatedSkillIds?.has(skill.id)),
+        },
         draggable: true,
+        zIndex: requiredSkillIds?.has(skill.id) || relatedSkillIds?.has(skill.id) ? 4 : 2,
         style: { opacity, ...transition },
       };
     });
@@ -428,48 +270,46 @@ export default function SkillTree() {
       
       if (searchMatches) {
         opacity = searchMatches.jobIds.has(job.id) ? 1 : 0.15;
-      } else if (filterHighlight) {
-        opacity = filterHighlight.jobIds.has(job.id) ? 1 : DIM_OPACITY;
       } else if (activeJobId) {
         opacity = activeJobId === job.id ? 1 : 0.5;
+      } else if (activeField !== 'Galaxy' && !isJobInScope(job, activeField, skills)) {
+        opacity = DIM_OPACITY;
       }
       
       return {
         id: job.id,
         type: 'jobNode',
-        position: getJobPosition(job.id, visibleJobs),
-        data: { job, skills },
+        position: getJobPosition(job, visibleJobs, skills),
+        data: { job, skills, isActive: jobModal?.id === job.id },
         draggable: true,
+        zIndex: jobModal?.id === job.id ? 5 : 1,
         style: { opacity, ...transition },
       };
     });
 
-    const categoryLabelNodes: Node[] = [];
-    if (activeField !== 'Universal') {
-      categoryLabelNodes.push({
-        id: `category-label-${activeField}`,
-        type: 'categoryLabelNode',
-        position: getCategoryLabelPosition(),
-        data: { label: activeField, color: CATEGORY_FILTER_COLORS[activeField] },
-        draggable: false,
-        selectable: false,
-        connectable: false,
-        focusable: false,
-        zIndex: 0,
-        style: { opacity: 1, ...transition },
-      });
-    }
-
-    return [bgNode, ...categoryLabelNodes, ...skillNodes, ...jobNodes];
-  }, [skills, requiredSkillIds, activeJobId, filterHighlight, activeField, searchMatches]);
+    return [bgNode, ...fieldNodes, ...skillNodes, ...jobNodes];
+  }, [skills, activeField, searchMatches, requiredSkillIds, relatedSkillIds, jobModal]);
 
   const edges = useMemo(
-    () => buildEdges(skills, activeJobId, categoryFilter),
-    [skills, activeJobId, categoryFilter],
+    () => buildEdges(skills, jobModal?.id ?? hoveredJobId, hoveredSkillId, activeField),
+    [skills, jobModal?.id, hoveredSkillId, hoveredJobId, activeField],
   );
 
+  const focusScope = useCallback((scope: MapScope) => {
+    setActiveField(scope);
+    setJobModal(null);
+    const zoom = scope === 'Galaxy' ? DEFAULT_GALAXY_ZOOM : DEFAULT_FIELD_ZOOM;
+    void flowRef.current?.setViewport(createCenteredViewport(getScopeCenter(scope), zoom), { duration: 700 });
+  }, []);
+
   const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
-    if (node.type === 'categoryLabelNode' || node.type === 'constellationBackground') return;
+    if (node.type === 'galaxyBackground') return;
+
+    if (node.type === 'fieldPlanetNode') {
+      const category = node.id.replace('field-', '') as SkillCategory;
+      focusScope(category);
+      return;
+    }
 
     if (node.type === 'skillNode') {
       const skill = skills.find(s => s.id === node.id);
@@ -490,16 +330,20 @@ export default function SkillTree() {
         setJobModal(job);
       }
     }
-  }, [skills]);
+  }, [focusScope, skills]);
 
   const onNodeMouseEnter = useCallback((_: React.MouseEvent, node: Node) => {
-    if (node.type === 'jobNode') {
+    if (node.type === 'skillNode') {
+      setHoveredSkillId(node.id);
+    } else if (node.type === 'jobNode') {
       setHoveredJobId(node.id);
     }
   }, []);
 
   const onNodeMouseLeave = useCallback((_: React.MouseEvent, node: Node) => {
-    if (node.type === 'jobNode') {
+    if (node.type === 'skillNode') {
+      setHoveredSkillId(null);
+    } else if (node.type === 'jobNode') {
       setHoveredJobId(null);
     }
   }, []);
@@ -515,8 +359,8 @@ export default function SkillTree() {
   }, []);
 
   const navItems = useMemo(() => [
-    { id: 'Universal', label: 'Universal Core', color: CATEGORY_FILTER_COLORS['Universal'] },
-    ...CATEGORY_ORDER.map(field => ({ id: field, label: field.replace(' and ', ' / '), color: CATEGORY_FILTER_COLORS[field] }))
+    { id: 'Galaxy' as const, label: 'Galaxy View', color: '#e0f2fe' },
+    ...FIELD_CATEGORIES.map(field => ({ id: field, label: FIELD_THEMES[field].label, color: FIELD_THEMES[field].color }))
   ], []);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -542,7 +386,7 @@ export default function SkillTree() {
             </div>
             {viewMode === 'map' && (
               <h1 className="text-xs font-bold text-gray-400 uppercase tracking-wider font-mono">
-                System Arc // <span className="text-white">{activeField}</span>
+                Galaxy Atlas // <span className="text-white">{activeField === 'Galaxy' ? 'All Fields' : FIELD_THEMES[activeField].label}</span>
               </h1>
             )}
           </div>
@@ -596,9 +440,7 @@ export default function SkillTree() {
                       onMouseDown={() => {
                         setSearchQuery(skill.name);
                         setShowSuggestions(false);
-                        if (skill.category === 'Universal' || CATEGORY_ORDER.includes(skill.category)) {
-                          setActiveField(skill.category);
-                        }
+                        focusScope(skill.category);
                       }}
                       className="w-full text-left px-4 py-2.5 text-[11px] font-mono font-bold text-gray-400 hover:bg-cyan-500/10 hover:text-cyan-400 transition-colors flex items-center justify-between"
                     >
@@ -606,9 +448,9 @@ export default function SkillTree() {
                       <span 
                         className="text-[8px] px-2 py-0.5 rounded border tracking-tight shrink-0 font-sans" 
                         style={{ 
-                          color: CATEGORY_FILTER_COLORS[skill.category], 
-                          borderColor: `${CATEGORY_FILTER_COLORS[skill.category]}44`,
-                          background: `${CATEGORY_FILTER_COLORS[skill.category]}0d`
+                          color: FIELD_THEMES[skill.category].color, 
+                          borderColor: `${FIELD_THEMES[skill.category].color}44`,
+                          background: `${FIELD_THEMES[skill.category].color}0d`
                         }}
                       >
                         {skill.category.split(' ')[0]}
@@ -656,7 +498,7 @@ export default function SkillTree() {
         {viewMode === 'map' && (
           <nav className="w-56 bg-gray-950/40 backdrop-blur-md border-r border-gray-900/60 p-4 flex flex-col gap-1.5 z-30 shrink-0 select-none overflow-y-auto">
             <div className="text-[10px] font-mono font-bold tracking-wider text-gray-500 uppercase px-3 mb-2">
-              Field Interested
+              Galaxy Navigation
             </div>
             {navItems.map((item) => {
               const isActive = activeField === item.id;
@@ -664,7 +506,7 @@ export default function SkillTree() {
                 <button
                   key={item.id}
                   type="button"
-                  onClick={() => setActiveField(item.id as SkillCategory | 'Universal')}
+                  onClick={() => focusScope(item.id as MapScope)}
                   className={`w-full text-left px-3 py-2 rounded-xl text-[11px] font-mono font-bold uppercase tracking-wide transition-all duration-200 border flex items-center gap-2.5 ${
                     isActive 
                       ? 'bg-gray-900 text-white border-gray-800' 
@@ -702,6 +544,9 @@ export default function SkillTree() {
                   onNodeMouseEnter={onNodeMouseEnter}
                   onNodeMouseLeave={onNodeMouseLeave}
                   onPaneClick={onPaneClick}
+                  onInit={(instance) => {
+                    flowRef.current = instance;
+                  }}
                   defaultViewport={DEFAULT_VIEWPORT}
                   minZoom={0.1}
                   maxZoom={1.5}
@@ -767,28 +612,6 @@ export default function SkillTree() {
           job={jobModal}
           skills={skills}
           onClose={() => setJobModal(null)}
-        />
-      )}
-
-      {onboarding && (
-        <OnboardingModal
-          skills={skills}
-          onClose={() => setOnboarding(false)}
-          onComplete={(updatedSkillNames: string[]) => {
-            setSkills(prevSkills =>
-              prevSkills.map(skill => {
-                const isSelected = updatedSkillNames.some(
-                  name => name.toLowerCase() === skill.name.toLowerCase() || name === skill.id
-                );
-                
-                if (isSelected) {
-                  return { ...skill, status: 'self-declared' as const };
-                }
-                return skill;
-              })
-            );
-            setOnboarding(false);
-          }}
         />
       )}
     </div>

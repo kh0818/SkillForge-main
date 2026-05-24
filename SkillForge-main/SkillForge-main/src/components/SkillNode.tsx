@@ -1,167 +1,135 @@
 import { memo } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
-import { CheckCircle, Link, BookOpen, Lock } from 'lucide-react';
+import { BookOpen, CheckCircle, Link, Lock } from 'lucide-react';
 import type { Skill } from '../data/mockData';
+import { FIELD_THEMES } from '../utils/galaxyLayout';
 
 interface SkillNodeData {
   skill: Skill;
   prerequisiteBlocked?: boolean;
   unmetPrerequisites?: { id: string; name: string }[];
-  isUnlocking?: boolean;
+  isRequired?: boolean;
 }
-
-const categoryColors: Record<string, string> = {
-  'Universal': '#22d3ee',
-  'Engineering and Tech': '#3b82f6',
-  'Business and Finance': '#f59e0b',
-  'Medicine and Health': '#22c55e',
-  'Creative and Design': '#a855f7',
-  'Sciences and Research': '#06b6d4',
-  'Education and Social Sciences': '#f97316',
-};
 
 const statusConfig = {
   locked: {
-    bg: 'bg-gray-800',
-    border: 'border-gray-600',
-    text: 'text-gray-400',
-    glow: '',
     label: 'Locked',
+    border: '#475569',
+    text: 'text-slate-400',
+    fill: 'rgba(15, 23, 42, 0.88)',
   },
   'self-declared': {
-    bg: 'bg-gray-900',
-    border: 'border-green-600',
-    text: 'text-green-300',
-    glow: 'shadow-[0_0_12px_rgba(34,197,94,0.3)]',
-    label: 'Self-declared',
+    label: 'Declared',
+    border: '#22c55e',
+    text: 'text-emerald-200',
+    fill: 'rgba(6, 78, 59, 0.5)',
   },
   evidenced: {
-    bg: 'bg-gray-900',
-    border: 'border-green-500',
-    text: 'text-green-200',
-    glow: 'shadow-[0_0_18px_rgba(34,197,94,0.45)]',
     label: 'Evidenced',
+    border: '#10b981',
+    text: 'text-emerald-100',
+    fill: 'rgba(6, 95, 70, 0.62)',
   },
   verified: {
-    bg: 'bg-gray-900',
-    border: 'border-yellow-400',
-    text: 'text-green-100',
-    glow: 'shadow-[0_0_22px_rgba(250,204,21,0.5)]',
     label: 'Verified',
+    border: '#facc15',
+    text: 'text-yellow-100',
+    fill: 'rgba(113, 63, 18, 0.64)',
   },
 };
 
-const StatusBadge = ({ status, prerequisiteBlocked }: { status: Skill['status']; prerequisiteBlocked?: boolean }) => {
-  if (prerequisiteBlocked) {
-    return (
-      <span className="absolute -top-2 -right-2 flex items-center gap-0.5 bg-gray-700 text-gray-300 text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none border border-gray-600">
-        <Lock size={8} />
-        BLOCKED
-      </span>
-    );
-  }
-
-  if (status === 'locked') return null;
-
-  if (status === 'verified') {
-    return (
-      <span className="absolute -top-2 -right-2 flex items-center gap-0.5 bg-yellow-400 text-gray-900 text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
-        <CheckCircle size={8} />
-        VERIFIED
-      </span>
-    );
-  }
-  if (status === 'evidenced') {
-    return (
-      <span className="absolute -top-2 -right-2 flex items-center gap-0.5 bg-green-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
-        <Link size={8} />
-        EVIDENCED
-      </span>
-    );
-  }
-  return (
-    <span className="absolute -top-2 -right-2 flex items-center gap-0.5 bg-gray-600 text-gray-200 text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
-      <BookOpen size={8} />
-      DECLARED
-    </span>
-  );
-};
+function StatusGlyph({ status, blocked }: { status: Skill['status']; blocked: boolean }) {
+  if (blocked) return <Lock size={12} />;
+  if (status === 'verified') return <CheckCircle size={12} />;
+  if (status === 'evidenced') return <Link size={12} />;
+  return <BookOpen size={12} />;
+}
 
 function SkillNode({ data }: NodeProps) {
-  const { skill, prerequisiteBlocked, unmetPrerequisites = [] } = data as unknown as SkillNodeData;
+  const { skill, prerequisiteBlocked = false, unmetPrerequisites = [], isRequired = false } = data as unknown as SkillNodeData;
   const displayLocked = skill.status === 'locked' || prerequisiteBlocked;
   const cfg = displayLocked ? statusConfig.locked : statusConfig[skill.status];
-  const accent = categoryColors[skill.category] ?? '#6b7280';
-
+  const theme = FIELD_THEMES[skill.category];
+  const accent = theme.color;
   const prereqHint =
     unmetPrerequisites.length === 1
       ? `Verify ${unmetPrerequisites[0].name} first`
-      : `Verify ${unmetPrerequisites.map(p => p.name).join(', ')} first`;
+      : `Verify ${unmetPrerequisites.map((prereq) => prereq.name).join(', ')} first`;
 
   return (
-    <div className="relative group">
+    <div
+      className={`orbital-satellite group relative w-36 cursor-pointer select-none ${prerequisiteBlocked ? 'satellite-blocked' : ''}`}
+      title={prerequisiteBlocked && unmetPrerequisites.length > 0 ? prereqHint : skill.description}
+    >
       <Handle
         type="target"
         position={Position.Top}
-        style={{ background: accent, border: 'none', width: 8, height: 8 }}
+        style={{ background: accent, border: 'none', height: 6, opacity: 0.3, width: 6 }}
       />
 
       <div
         className={`
-          relative w-36 rounded-xl border-2 px-3 py-2.5
+          relative overflow-hidden rounded-full border px-3 py-2.5
           transition-all duration-300 ease-out
-          ${'cursor-pointer hover:scale-105 hover:brightness-125'}
-          ${cfg.bg} ${cfg.border} ${cfg.glow}
+          group-hover:-translate-y-1 group-hover:scale-105
+          ${cfg.text}
+          ${isRequired ? 'satellite-required' : ''}
         `}
         style={{
-          boxShadow: !displayLocked
-            ? `0 0 0 1px ${accent}33, 0 4px 24px ${accent}22, ${cfg.glow}`
-            : undefined,
+          background: `radial-gradient(circle at 18% 16%, rgba(255,255,255,0.2), ${cfg.fill} 42%, rgba(2,6,23,0.92) 100%)`,
+          borderColor: isRequired ? '#67e8f9' : cfg.border,
+          boxShadow: displayLocked
+            ? '0 0 0 1px rgba(71,85,105,0.18), 0 12px 30px rgba(0,0,0,0.28)'
+            : `0 0 0 1px ${accent}33, 0 0 22px ${accent}22, inset 0 0 16px rgba(255,255,255,0.04)`,
         }}
       >
-        <StatusBadge status={skill.status} prerequisiteBlocked={prerequisiteBlocked} />
-        {skill.skillLevel > 0 && (
-  <span className={`absolute -top-2 -left-2 text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none ${
-    skill.skillLevel === 3 ? 'bg-yellow-400 text-gray-900' :
-    skill.skillLevel === 2 ? 'bg-gray-400 text-gray-900' :
-    'bg-amber-700 text-white'
-  }`}>
-    LVL {skill.skillLevel}
-  </span>
-)}
         <div
-          className="absolute top-0 left-3 right-3 h-0.5 rounded-full opacity-80"
-          style={{ background: accent }}
+          className="absolute inset-x-3 top-0 h-px opacity-80"
+          style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }}
         />
-
-        <p className="text-[10px] font-semibold mt-1 mb-0.5 opacity-60 tracking-widest uppercase" style={{ color: accent }}>
-          {skill.category}
-        </p>
-        <p className={`text-sm font-bold leading-tight ${cfg.text}`}>
-          {skill.name}
-        </p>
-
-        {prerequisiteBlocked && unmetPrerequisites.length > 0 && (
-          <p
-            className="text-[9px] text-amber-500/90 mt-1.5 leading-tight line-clamp-2"
-            title={prereqHint}
+        <div className="flex items-center gap-2">
+          <span
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border"
+            style={{
+              borderColor: `${accent}66`,
+              background: `${accent}1a`,
+              color: displayLocked ? '#94a3b8' : accent,
+            }}
           >
-            <Lock size={9} className="inline mr-0.5 -mt-px" />
-            {prereqHint}
-          </p>
-        )}
+            <StatusGlyph status={skill.status} blocked={displayLocked} />
+          </span>
+          <span className="min-w-0">
+            <span className="block truncate text-[10px] font-black uppercase tracking-[0.18em]" style={{ color: accent }}>
+              Orbit {skill.level}
+            </span>
+            <span className="block truncate text-xs font-black leading-tight text-white">
+              {skill.name}
+            </span>
+          </span>
+        </div>
 
-        {skill.status === 'locked' && !prerequisiteBlocked && (
-          <p className="text-[10px] text-gray-600 mt-1 leading-tight line-clamp-2">
-            {skill.description}
-          </p>
-        )}
+        <div className="mt-2 flex items-center justify-between gap-2">
+          <span className="text-[9px] font-bold uppercase tracking-wider text-slate-500">
+            {cfg.label}
+          </span>
+          {skill.skillLevel > 0 && (
+            <span className="rounded-full border border-white/10 bg-white/5 px-1.5 py-0.5 text-[9px] font-black text-slate-200">
+              L{skill.skillLevel}
+            </span>
+          )}
+        </div>
       </div>
+
+      {prerequisiteBlocked && unmetPrerequisites.length > 0 && (
+        <div className="pointer-events-none absolute left-1/2 top-full z-50 mt-2 w-48 -translate-x-1/2 rounded-lg border border-amber-500/30 bg-slate-950/95 px-3 py-2 text-[10px] font-semibold leading-snug text-amber-200 opacity-0 shadow-2xl backdrop-blur transition-opacity duration-200 group-hover:opacity-100">
+          {prereqHint}
+        </div>
+      )}
 
       <Handle
         type="source"
         position={Position.Bottom}
-        style={{ background: accent, border: 'none', width: 8, height: 8 }}
+        style={{ background: accent, border: 'none', height: 6, opacity: 0.3, width: 6 }}
       />
     </div>
   );

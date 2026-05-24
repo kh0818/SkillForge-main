@@ -89,9 +89,14 @@ export default function ProfilePage({ skills, jobs }: ProfilePageProps) {
                     <p className="text-white font-bold text-sm">{job.title}</p>
                     <p className="text-gray-500 text-xs mt-0.5">{job.description}</p>
                   </div>
-                  <span className={`text-lg font-bold ml-4 shrink-0 ${percent === 100 ? 'text-cyan-400' : 'text-gray-400'}`}>
-                    {percent}%
-                  </span>
+                  <div className="ml-4 shrink-0 text-right">
+                    <span className={`block text-lg font-bold ${percent === 100 ? 'text-cyan-400' : 'text-gray-400'}`}>
+                      {percent}%
+                    </span>
+                    <span className="block text-[10px] font-semibold uppercase tracking-wider text-gray-600">
+                      {verifiedCount}/{total}
+                    </span>
+                  </div>
                 </div>
                 <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden mb-3">
                   <div

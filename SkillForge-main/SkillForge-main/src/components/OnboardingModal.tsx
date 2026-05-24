@@ -157,7 +157,7 @@ export default function OnboardingModal({ skills = [], onClose, onComplete }: On
                       key={cat}
                       type="button"
                       onClick={() => handleCategoryToggle(cat)}
-                      className={`px-4 py-3 rounded-xl border-2 text-sm font-semibold transition-all text-left flex items-center justify-between ${
+                      className={`px-4 py-3 rounded-xl border-2 text-sm font-semibold text-left flex items-center justify-between ${
                         active
                           ? 'border-amber-500 text-amber-200 bg-amber-950/40 shadow-[0_0_12px_rgba(245,158,11,0.15)]'
                           : 'border-amber-900/40 text-amber-700/80 bg-transparent hover:border-amber-800/60'
@@ -190,7 +190,7 @@ export default function OnboardingModal({ skills = [], onClose, onComplete }: On
               {(['welcome', 'profile', 'interests', 'complete'] as Step[]).map((s, idx) => (
                 <div
                   key={s}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                  className={`h-1.5 rounded-full ${
                     step === s ? 'w-6 bg-amber-500' : 'w-2 bg-amber-950/80'
                   }`}
                   style={{
@@ -204,7 +204,7 @@ export default function OnboardingModal({ skills = [], onClose, onComplete }: On
   type="button"
   onClick={handleNext}
   disabled={step === 'profile' && !name.trim()}
-  className="px-6 py-2 rounded-xl bg-gradient-to-b from-amber-500 to-amber-700 text-neutral-950 font-bold text-sm shadow-md hover:brightness-110 disabled:opacity-40 disabled:pointer-events-none transition-all"
+  className="px-6 py-2 rounded-xl bg-gradient-to-b from-amber-500 to-amber-700 text-neutral-950 font-bold text-sm shadow-md hover:brightness-110 disabled:opacity-40 disabled:pointer-events-none"
 >
               {step === 'complete' ? 'Build my SkillTree' : 'Continue'}
             </button>

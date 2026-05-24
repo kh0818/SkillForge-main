@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { X, Swords, Trophy, Skull, Loader2 } from 'lucide-react';
 import type { Skill } from '../data/mockData';
-import { generateSkillQuiz, QuizQuestion } from '../services/gemini';
-
-const PASS_THRESHOLD = 4;
-const TOTAL_QUESTIONS = 5;
+import { generateSkillQuiz, type QuizQuestion } from '../services/gemini';
+import QuizAttemptRail, { type AttemptState } from './QuizAttemptRail';
+import { QUIZ_PASS_THRESHOLD, QUIZ_QUESTION_COUNT } from '../constants/quiz';
 
 type Phase = 'loading' | 'quiz' | 'victory' | 'fail';
 
@@ -26,10 +25,12 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [attempts, setAttempts] = useState<AttemptState[]>(() => Array(QUIZ_QUESTION_COUNT).fill(null));
+  const [attemptNumber, setAttemptNumber] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [loadKey, setLoadKey] = useState(0);
 
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const accent = categoryAccent[skill.category] ?? '#d97706';
 
   const loadQuiz = useCallback(async (targetSkill: Skill) => {
@@ -38,6 +39,7 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
     setCurrentIndex(0);
     setScore(0);
     setSelectedIndex(null);
+    setAttempts(Array(QUIZ_QUESTION_COUNT).fill(null));
     setError(null);
 
     try {
@@ -55,7 +57,7 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [skill.id, loadKey, loadQuiz]);
+  }, [skill, loadKey, loadQuiz]);
 
   const handleAnswer = (optionIndex: number) => {
     if (selectedIndex !== null || phase !== 'quiz') return;
@@ -65,12 +67,15 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
     setSelectedIndex(optionIndex);
     const newScore = correct ? score + 1 : score;
     setScore(newScore);
+    setAttempts((current) =>
+      current.map((state, index) => (index === currentIndex ? (correct ? 'correct' : 'incorrect') : state)),
+    );
 
-    const isLast = currentIndex === TOTAL_QUESTIONS - 1;
+    const isLast = currentIndex === QUIZ_QUESTION_COUNT - 1;
 
     timerRef.current = setTimeout(() => {
       if (isLast) {
-        if (newScore >= PASS_THRESHOLD) {
+        if (newScore >= QUIZ_PASS_THRESHOLD) {
           setPhase('victory');
           onVerified(skill.id);
         } else {
@@ -84,6 +89,7 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
   };
 
   const handleRetry = () => {
+    setAttemptNumber((attempt) => attempt + 1);
     setLoadKey((k) => k + 1);
   };
 
@@ -95,7 +101,7 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-lg rounded-2xl border-2 shadow-2xl overflow-hidden"
+        className="relative w-full max-w-4xl rounded-2xl border-2 shadow-2xl overflow-hidden"
         style={{
           borderColor: `${accent}88`,
           boxShadow: `0 0 40px ${accent}33, inset 0 1px 0 rgba(255,255,255,0.06)`,
@@ -123,7 +129,8 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
           </button>
         </div>
 
-        <div className="px-6 py-5">
+        <div className="grid lg:grid-cols-[minmax(0,1fr)_12rem]">
+          <div className="px-6 py-5">
           <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: accent }}>
             {skill.category}
           </p>
@@ -158,10 +165,10 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
             <>
               <div className="flex items-center justify-between mb-4">
                 <span className="text-amber-500/90 text-sm font-semibold">
-                  Question {currentIndex + 1} of {TOTAL_QUESTIONS}
+                  Question {currentIndex + 1} of {QUIZ_QUESTION_COUNT}
                 </span>
                 <span className="text-xs text-amber-800 font-medium tabular-nums">
-                  Score: {score}/{PASS_THRESHOLD} to pass
+                  Score: {score}/{QUIZ_PASS_THRESHOLD} to pass
                 </span>
               </div>
 
@@ -169,7 +176,7 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
                 <div
                   className="h-full rounded-full transition-all duration-300"
                   style={{
-                    width: `${((currentIndex + 1) / TOTAL_QUESTIONS) * 100}%`,
+                    width: `${((currentIndex + 1) / QUIZ_QUESTION_COUNT) * 100}%`,
                     background: `linear-gradient(90deg, ${accent}, #d97706)`,
                   }}
                 />
@@ -220,7 +227,7 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
               </div>
               <h3 className="text-2xl font-bold text-yellow-300 mb-2">Victory!</h3>
               <p className="text-amber-600/80 text-sm mb-1">
-                You scored {score}/{TOTAL_QUESTIONS}
+                You scored {score}/{QUIZ_QUESTION_COUNT}
               </p>
               <p className="text-green-400/90 text-sm font-semibold mb-6">
                 {skill.name} is now VERIFIED
@@ -242,7 +249,7 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
               </div>
               <h3 className="text-xl font-bold text-red-400/90 mb-2">Defeated</h3>
               <p className="text-amber-700/80 text-sm mb-6">
-                You scored {score}/{TOTAL_QUESTIONS}. Need {PASS_THRESHOLD}/{TOTAL_QUESTIONS} to pass.
+                You scored {score}/{QUIZ_QUESTION_COUNT}. Need {QUIZ_PASS_THRESHOLD}/{QUIZ_QUESTION_COUNT} to pass.
               </p>
               <button
                 type="button"
@@ -253,6 +260,16 @@ export default function SkillQuizModal({ skill, onClose, onVerified }: SkillQuiz
               </button>
             </div>
           )}
+          </div>
+
+          <QuizAttemptRail
+            accent={accent}
+            attemptNumber={attemptNumber}
+            attempts={attempts}
+            currentIndex={currentIndex}
+            isActive={phase === 'quiz'}
+            score={score}
+          />
         </div>
 
         <div className="h-1 bg-gradient-to-r from-transparent via-amber-700/40 to-transparent" />
